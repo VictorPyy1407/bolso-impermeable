@@ -7,6 +7,7 @@ const CONFIG = {
   SUPABASE_URL: "https://roruinqorwgolcrhhmpm.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_aRPb1yNunMEheat00BxwtQ_Uft732KJ",
   SUPABASE_TABLE: "pedidos_web",
+  ORIGIN: "landing_bolso_impermeable",
 
   TELEGRAM_BOT_TOKEN: "PEGAR_AQUI",
   TELEGRAM_CHAT_ID: "PEGAR_AQUI",

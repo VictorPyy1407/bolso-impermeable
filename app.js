@@ -158,10 +158,13 @@
     if (value("referencia")) referenceParts.push(value("referencia"));
     if (value("barrio")) referenceParts.push(`Barrio: ${value("barrio")}`);
     if (value("color")) referenceParts.push(`Color: ${value("color")}`);
-    return LandingUtils.removeEmptyFields(Object.assign({
+    // Solo columnas que existen en la tabla `pedidos_web` (compartida con el panel admin).
+    // El barrio y el color van dentro de `referencia`; la ubicación en `ubicacion_maps`.
+    return LandingUtils.removeEmptyFields({
       id: `PY${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 90 + 10)}`,
       producto: CONFIG.PRODUCT_NAME,
       precio: CONFIG.PRICE,
+      cantidad: quantity,
       subtotal: CONFIG.PRICE * quantity,
       ganancia: 0,
       nombre: value("nombre"),
@@ -170,24 +173,20 @@
       ci: "No informado",
       departamento: value("departamento"),
       ciudad: value("ciudad"),
-      barrio: value("barrio"),
       direccion: value("direccion"),
       referencia: referenceParts.join(" | ") || "No informado",
-      maps: value("maps"),
       ubicacion_maps: value("maps") || "No informado",
-      color: value("color"),
-      cantidad: quantity,
       observaciones: value("observaciones") || "Sin observaciones",
       estado: "Pendiente",
-      origen: "landing_bolsa_impermeable_xl",
+      origen: "landing_bolso_impermeable",
       created_at: new Date().toISOString(),
-      referer: campaign.referer,
-      page_url: campaign.page_url,
       user_agent: campaign.user_agent,
-      device: campaign.device,
-      browser: campaign.browser,
-      language: campaign.language
-    }, campaign));
+      utm_source: campaign.utm_source,
+      utm_medium: campaign.utm_medium,
+      utm_campaign: campaign.utm_campaign,
+      fbclid: campaign.fbclid,
+      gclid: campaign.gclid
+    });
   }
 
   function initGeo(form) {
@@ -238,7 +237,9 @@
     form.addEventListener("focusin", () => {
       if (checkoutFromFormSent) return;
       checkoutFromFormSent = true;
-      OrderAnalytics.beginCheckout(Number(form.elements.cantidad?.value || 1));
+      const qty = Number(form.elements.cantidad?.value || 1);
+      OrderAnalytics.beginCheckout(qty);
+      window.VisitorTracker?.trackEcommerce("begin_checkout", { revenue: qty * CONFIG.PRICE });
     });
 
     form.elements.telefono?.addEventListener("blur", () => {
@@ -266,6 +267,9 @@
         OrderTelegram.sendOrderNotification(order).catch((error) => console.warn("Telegram notification failed:", error));
         OrderAnalytics.lead(order.cantidad);
         OrderAnalytics.purchase(order.cantidad, savedOrder && savedOrder.id);
+        const orderId = (savedOrder && savedOrder.id) || order.id;
+        window.VisitorTracker?.trackEcommerce("generate_lead", { orderId, revenue: order.subtotal });
+        window.VisitorTracker?.trackEcommerce("purchase", { orderId, revenue: order.subtotal });
         form.reset();
         initQuantity(form);
         showModal(true, "Pedido recibido correctamente", "Gracias por tu compra. Nuestro equipo se comunicará contigo en breve para confirmar los datos de entrega.");
