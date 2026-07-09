@@ -9,25 +9,73 @@
     return Array.from((root || document).querySelectorAll(selector));
   }
 
-  function scrollToForm() {
-    const target = $("#pedido");
-    if (!target) return;
-    const y = target.getBoundingClientRect().top + window.pageYOffset - 60;
-    window.scrollTo({ top: y, behavior: "smooth" });
+  function openCheckoutPanel() {
+    const panel = $("#checkout-panel");
+    const overlay = $("#checkout-overlay");
+    if (panel && overlay) {
+      panel.classList.add("active");
+      overlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+    const qty = Number(document.querySelector("#order-form [name=cantidad]")?.value || 1);
+    OrderAnalytics.addPaymentInfo(qty);
+  }
+
+  function closeCheckoutPanel() {
+    const panel = $("#checkout-panel");
+    const overlay = $("#checkout-overlay");
+    if (panel && overlay) {
+      panel.classList.remove("active");
+      overlay.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+  }
+
+  const ZONA_1 = [
+    "aregua","asuncion","asunción","capiatá","capiata",
+    "fernando de la mora","lambaré","lambare","limpio",
+    "mariano roque alonso","san lorenzo","villa elisa",
+    "ypane","ypané","ñemby","nemby"
+  ];
+
+  function esZona1(ciudad, departamento) {
+    if (!ciudad) return false;
+    const dep = (departamento || "").toLowerCase().trim();
+    const c = ciudad.toLowerCase().trim();
+    if (dep === "asunción (capital)" || dep === "asuncion (capital)") return true;
+    if (dep === "central" && !ZONA_1.some(z => c.includes(z) || z.includes(c))) return false;
+    return ZONA_1.some(z => c.includes(z) || z.includes(c));
+  }
+
+  function buildWhatsAppUrl(order) {
+    const txt = encodeURIComponent(
+      `¡Hola! Quiero comprar la Bolsa Impermeable XL Premium.\n\n` +
+      `*Producto:* ${order.producto}\n` +
+      `*Cantidad:* ${order.cantidad}\n` +
+      `*Total:* ${LandingUtils.formatGs(order.subtotal)}\n` +
+      `*Nombre:* ${order.nombre}\n` +
+      `*Teléfono:* ${order.telefono}\n` +
+      `*Departamento:* ${order.departamento}\n` +
+      `*Ciudad:* ${order.ciudad}\n` +
+      `*Dirección:* ${order.direccion}\n` +
+      (order.referencia !== "No informado" ? `*Referencia:* ${order.referencia}\n` : "") +
+      (order.color ? `*Color:* ${order.color}\n` : "") +
+      `\nQuedo atento a la confirmación.`
+    );
+    return `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${txt}`;
   }
 
   function initScrollUi() {
     $$('[data-buy]').forEach((button) => {
       button.addEventListener("click", () => {
-        const qty = Number($("#cantidad")?.value || 1);
+        const qty = Number(document.querySelector("#order-form [name=cantidad]")?.value || 1);
         OrderAnalytics.beginCheckout(qty);
-        scrollToForm();
+        openCheckoutPanel();
       });
     });
 
     const header = $("#site-header");
     const bar = $("#mobile-bar");
-    const formSection = $("#pedido");
 
     const onScroll = () => {
       const y = window.pageYOffset;
@@ -35,12 +83,7 @@
       if (!bar) return;
       const isMobile = window.innerWidth < 760;
       const pastHero = y > 620;
-      let nearForm = false;
-      if (formSection) {
-        const rect = formSection.getBoundingClientRect();
-        nearForm = rect.top < window.innerHeight && rect.bottom > 0;
-      }
-      bar.style.transform = isMobile && pastHero && !nearForm ? "translateY(0)" : "translateY(120%)";
+      bar.style.transform = isMobile && pastHero ? "translateY(0)" : "translateY(120%)";
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -119,6 +162,12 @@
     button.disabled = submitting;
     button.classList.toggle("is-loading", submitting);
     if (text) text.textContent = submitting ? "Enviando pedido..." : "FINALIZAR PEDIDO";
+    if (text && !submitting) {
+      const form = button.closest("form");
+      const ciudad = form?.elements?.ciudad?.value || "";
+      const depto = form?.elements?.departamento?.value || "";
+      text.textContent = (ciudad && !esZona1(ciudad, depto)) ? "CONSULTAR POR WHATSAPP" : "FINALIZAR PEDIDO";
+    }
   }
 
   function showFormMessage(message) {
@@ -141,11 +190,19 @@
     const icon = $("#order-modal-icon");
     const titleEl = $("#order-modal-title");
     const messageEl = $("#order-modal-message");
+    const waBtn = $("#order-modal-wa");
     if (!modal || !icon || !titleEl || !messageEl) return;
     icon.className = "order-modal__icon " + (success ? "ok" : "fail");
     icon.textContent = success ? "✓" : "!";
     titleEl.textContent = title;
     messageEl.textContent = message;
+    if (waBtn) {
+      waBtn.style.display = success ? "inline-flex" : "none";
+      if (success) {
+        const txt = encodeURIComponent("¡Hola! Acabo de realizar mi pedido de la Bolsa Impermeable XL Premium. Quedo atento a la confirmación.");
+        waBtn.href = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${txt}`;
+      }
+    }
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
   }
@@ -233,6 +290,39 @@
     initQuantity(form);
     initGeo(form);
 
+    const ciudadInput = form.elements.ciudad;
+    const paymentZone = $("#payment-zone");
+    const paymentZoneIcon = $("#payment-zone-icon");
+    const paymentZoneText = $("#payment-zone-text");
+    const whatsappZone = $("#whatsapp-zone");
+    const whatsappBtn = $("#whatsapp-btn");
+
+    function updateZone() {
+      const ciudad = ciudadInput?.value || "";
+      const depto = form.elements.departamento?.value || "";
+      const z1 = esZona1(ciudad, depto);
+      const submitText = $("[data-submit-text]", form);
+      if (paymentZone && z1) {
+        paymentZone.style.display = "flex";
+        paymentZone.style.background = "#1a2e1a";
+        paymentZone.style.border = "1px solid #1fa463";
+        paymentZoneIcon.textContent = "📦";
+        paymentZoneText.textContent = "Excelente — tu ciudad está en Zona 1. Recibís el pedido en tu casa y pagás contra entrega en efectivo o transferencia.";
+        if (submitText) submitText.textContent = "FINALIZAR PEDIDO";
+      } else if (paymentZone) {
+        paymentZone.style.display = "none";
+      }
+      if (whatsappZone) {
+        whatsappZone.style.display = (ciudad && !z1) ? "block" : "none";
+        if (submitText && ciudad && !z1) submitText.textContent = "CONSULTAR POR WHATSAPP";
+        else if (submitText && !ciudad) submitText.textContent = "FINALIZAR PEDIDO";
+      }
+    }
+
+    ciudadInput?.addEventListener("input", updateZone);
+    ciudadInput?.addEventListener("blur", updateZone);
+    updateZone();
+
     let checkoutFromFormSent = false;
     form.addEventListener("focusin", () => {
       if (checkoutFromFormSent) return;
@@ -259,6 +349,19 @@
       }
 
       const order = collectOrder(form);
+
+      if (!esZona1(order.ciudad, order.departamento)) {
+        setSubmitting(button, true);
+        showFormMessage("Redirigiendo a WhatsApp para coordinar el pago por adelantado...");
+        const waUrl = buildWhatsAppUrl(order);
+        window.open(waUrl, "_blank");
+        setTimeout(() => {
+          closeCheckoutPanel();
+          setTimeout(() => { form.reset(); showFormMessage(""); isSubmitting = false; setSubmitting(button, false); }, 350);
+        }, 500);
+        return;
+      }
+
       isSubmitting = true;
       setSubmitting(button, true);
 
@@ -284,12 +387,49 @@
     });
   }
 
+  function initGallery() {
+    const mainImg = $("#gallery-main");
+    const thumbs = $$(".gallery-thumb");
+    const prev = $("#gallery-prev");
+    const next = $("#gallery-next");
+    const counter = $("#gallery-current-idx");
+    if (!mainImg || !thumbs.length) return;
+
+    const images = [
+      "assets/Imagen%20principal.jpg",
+      "assets/Bolso-Gris.jpg",
+      "assets/Bolso-Negro.jpg",
+      "assets/Bolso-Rosa.jpg",
+      "assets/Bolso-Lila.jpg"
+    ];
+
+    let current = 0;
+
+    function updateGallery(index) {
+      current = index;
+      mainImg.style.opacity = "0.3";
+      setTimeout(() => {
+        mainImg.src = images[current];
+        mainImg.style.opacity = "1";
+      }, 150);
+      thumbs.forEach((t, i) => t.classList.toggle("active", i === current));
+      if (counter) counter.textContent = current + 1;
+    }
+
+    thumbs.forEach((t) => {
+      t.addEventListener("click", () => updateGallery(parseInt(t.getAttribute("data-index"), 10)));
+    });
+    prev?.addEventListener("click", () => updateGallery(current - 1 < 0 ? images.length - 1 : current - 1));
+    next?.addEventListener("click", () => updateGallery(current + 1 >= images.length ? 0 : current + 1));
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     OrderAnalytics.initMetaPixel();
     OrderAnalytics.initGA4();
     initScrollUi();
     initFaqAndReveal();
     initForm();
+    initGallery();
 
     $("#order-modal-accept")?.addEventListener("click", () => {
       const modal = $("#order-modal");
@@ -297,5 +437,9 @@
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden", "true");
     });
+
+    $("#checkout-panel-close")?.addEventListener("click", closeCheckoutPanel);
+    $("#checkout-overlay")?.addEventListener("click", closeCheckoutPanel);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCheckoutPanel(); });
   });
 })();
