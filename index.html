@@ -12,15 +12,15 @@
 <meta property="og:image" content="assets/Imagen%20principal.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" as="image" href="assets/Imagen%20principal.jpg">
-<link rel="stylesheet" href="styles.css">
-<script src="config.js"></script>
+<link rel="stylesheet" href="styles.css?v=6">
+<script src="config.js?v=3"></script>
 <script src="utils.js" defer></script>
 <script src="analytics.js" defer></script>
 <script src="validation.js" defer></script>
 <script src="supabase.js" defer></script>
 <script src="telegram.js" defer></script>
 <script src="tracker.js" defer></script>
-<script src="app.js" defer></script>
+<script src="app.js?v=3" defer></script>
 </head>
 <body>
 <div style="max-width:1180px;margin:0 auto;overflow:hidden">
@@ -366,6 +366,13 @@
     </div>
     <button data-buy="" style="cursor:pointer;border:none;background:#FF6A00;color:#fff;font-family:'Montserrat';font-weight:900;font-size:clamp(18px,3.4vw,22px);padding:20px 40px;border-radius:16px;width:100%;max-width:460px;animation:cta-pulse 2.4s ease-in-out infinite;letter-spacing:.3px">QUIERO LA MÍA →</button>
     <p style="font-size:13px;color:#6a6a6a;margin:14px 0 0">💵 Pagás al recibir · 🚚 Envío a todo Paraguay</p>
+    <div style="margin:22px 0 0">
+      <p style="font-size:14px;color:#4a4a4a;margin:0 0 12px">¿Tenés alguna duda antes de comprar?</p>
+      <a class="btn-whatsapp" id="final-whatsapp" href="#" target="_blank" rel="noreferrer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Escribinos por WhatsApp
+      </a>
+    </div>
   </div>
 </section>
 
@@ -377,24 +384,46 @@
     <button class="checkout-panel-close" id="checkout-panel-close" aria-label="Cerrar">&times;</button>
   </div>
   <div class="checkout-panel-body">
-    <div class="panel-summary">
-      <div class="panel-summary-row">
-        <span class="panel-product-name">Bolsa Impermeable XL Premium</span>
-        <span class="panel-product-price">Gs. 219.000</span>
+    <div class="order-summary" id="order-summary">
+      <div class="order-summary-head">
+        <span class="order-summary-title">🧾 Resumen de tu pedido</span>
+        <span class="order-summary-badge">Pago contra entrega</span>
       </div>
-      <div class="panel-summary-row">
-        <span>Envío</span>
-        <span style="color:#1fa463;font-weight:700">A coordinar</span>
+      <div class="order-summary-product">
+        <img id="summary-thumb" src="assets/Imagen%20principal.jpg" alt="Bolsa Impermeable XL Premium">
+        <div class="order-summary-info">
+          <div class="order-summary-name">Bolsa Impermeable XL Premium</div>
+          <div class="order-summary-meta">
+            <span class="summary-chip" id="summary-color-chip" style="display:none"></span>
+            <span class="summary-chip">Cantidad: <strong id="summary-qty">1</strong></span>
+          </div>
+        </div>
       </div>
-      <hr class="panel-divider">
-      <div class="panel-summary-total">
-        <span>Total</span>
-        <strong>Gs. 219.000</strong>
+      <div class="order-summary-lines">
+        <div class="summary-line"><span>Precio unitario</span><span id="summary-unit">Gs. 219.000</span></div>
+        <div class="summary-line"><span>Subtotal</span><span id="summary-subtotal">Gs. 219.000</span></div>
+        <div class="summary-line summary-line--save"><span>Ahorrás</span><span id="summary-save">− Gs. 80.000</span></div>
+        <div class="summary-line"><span>Envío</span><span class="summary-ship"><s>Gs. 28.000</s> <span class="summary-free">GRATIS</span></span></div>
+      </div>
+      <div class="order-summary-total">
+        <div class="order-summary-total-left">
+          <span class="order-summary-total-label">Total a pagar al recibir</span>
+          <span class="order-summary-old" id="summary-old">Gs. 299.000</span>
+        </div>
+        <strong id="summary-total">Gs. 219.000</strong>
+      </div>
+    </div>
+
+    <div class="cod-reassure">
+      <span class="cod-reassure-icon">💵</span>
+      <div>
+        <p style="margin:0 0 7px"><strong>Asunción y Central — Pago contra entrega.</strong> No pagás nada ahora: recibís la bolsa en tu casa y pagás en efectivo cuando la tengas en la mano.</p>
+        <p style="margin:0"><strong>📦 Interior del país.</strong> El pago se abona por adelantado antes de enviar el pedido.</p>
       </div>
     </div>
 
     <form id="order-form" novalidate style="display:flex;flex-direction:column;gap:10px">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="checkout-row2">
         <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Nombre *
           <input name="nombre" required placeholder="Ej: María González" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
           <span class="field-error" data-error-for="nombre"></span>
@@ -404,7 +433,7 @@
           <span class="field-error" data-error-for="telefono"></span>
         </label>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="checkout-row2">
         <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Departamento *
           <select name="departamento" required style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
             <option value="">Seleccioná...</option>
@@ -425,26 +454,28 @@
         <input name="barrio" placeholder="Ej: Villa Morra" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
         <span class="field-error" data-error-for="barrio"></span>
       </label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Cantidad *
+      <div class="field-block">
+        <span class="field-label">Elegí el color</span>
+        <div class="color-swatches" role="radiogroup" aria-label="Color">
+          <button type="button" class="color-swatch" data-color="Negro" data-img="assets/Bolso-Negro.jpg" style="--sw:#141414" title="Negro" aria-label="Negro"></button>
+          <button type="button" class="color-swatch" data-color="Gris" data-img="assets/Bolso-Gris.jpg" style="--sw:#9a9a9a" title="Gris" aria-label="Gris"></button>
+          <button type="button" class="color-swatch" data-color="Rosa" data-img="assets/Bolso-Rosa.jpg" style="--sw:#e59ab8" title="Rosa" aria-label="Rosa"></button>
+          <button type="button" class="color-swatch" data-color="Lila" data-img="assets/Bolso-Lila.jpg" style="--sw:#b9a7e0" title="Lila" aria-label="Lila"></button>
+          <span class="color-selected-label" id="color-selected-label">Tocá para elegir</span>
+        </div>
+        <input type="hidden" name="color" id="color-input">
+      </div>
+      <div class="field-block">
+        <span class="field-label">Cantidad</span>
+        <div class="qty-row">
           <div class="quantity-control">
             <button type="button" data-qty-minus aria-label="Restar cantidad">−</button>
-            <input name="cantidad" id="cantidad" required inputmode="numeric" min="1" value="1" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none;text-align:center">
+            <input name="cantidad" id="cantidad" required inputmode="numeric" min="1" max="3" value="1" readonly style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none;text-align:center">
             <button type="button" data-qty-plus aria-label="Sumar cantidad">+</button>
           </div>
-          <span class="field-error" data-error-for="cantidad"></span>
-        </label>
-        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Color
-          <select name="color" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
-            <option value="">Seleccioná...</option>
-            <option>Negro</option><option>Gris</option><option>Rosa</option><option>Lila</option>
-          </select>
-          <span class="field-error" data-error-for="color"></span>
-        </label>
-      </div>
-      <div style="background:#1e1e1e;border:1px solid #333;border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:11px;color:#b2b2b2">Total contra entrega</div><div id="order-total" style="font-family:'Montserrat';font-weight:900;font-size:20px;color:#FF6A00">Gs. 219.000</div></div>
-        <div style="text-align:right"><div style="font-size:10px;color:#8a8a8a;text-decoration:line-through">Gs. 299.000</div><div style="background:#FF6A00;color:#fff;font-weight:800;font-size:10px;padding:3px 7px;border-radius:6px;margin-top:2px">AHORRÁS 80.000</div></div>
+          <span class="qty-hint">🔥 2 uds. = Gs. 360.000 · 3 uds. = Gs. 480.000 — te sale más barato por unidad</span>
+        </div>
+        <span class="field-error" data-error-for="cantidad"></span>
       </div>
       <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Referencia
         <input name="referencia" placeholder="Ej: casa portón blanco" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
@@ -457,16 +488,10 @@
         <span class="field-hint" data-maps-hint>Ayuda a que la entrega llegue más rápido y sin errores.</span>
         <span class="field-error" data-error-for="maps"></span>
       </label>
-      <div class="payment-zone" id="payment-zone" style="display:none;">
-        <span class="payment-zone-icon" id="payment-zone-icon">📦</span>
-        <span class="payment-zone-text" id="payment-zone-text"></span>
-      </div>
-      <div class="whatsapp-zone" id="whatsapp-zone" style="display:none;">
-        <p class="whatsapp-zone-text">Para tu ciudad necesitamos coordinar el pago por adelantado.</p>
-        <a class="btn-whatsapp" id="whatsapp-btn" href="#" target="_blank" rel="noreferrer">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Consultar por WhatsApp
-        </a>
+      <div class="checkout-trust">
+        <span>🔒 Datos protegidos</span>
+        <span>💵 Pagás al recibir</span>
+        <span>🚚 Envío a todo el país</span>
       </div>
       <div id="form-error" class="form-message" role="alert"></div>
       <button type="submit" id="submit-order" class="btn-submit-order">

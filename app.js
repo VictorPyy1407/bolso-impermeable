@@ -31,40 +31,6 @@
     }
   }
 
-  const ZONA_1 = [
-    "aregua","asuncion","asunción","capiatá","capiata",
-    "fernando de la mora","lambaré","lambare","limpio",
-    "mariano roque alonso","san lorenzo","villa elisa",
-    "ypane","ypané","ñemby","nemby"
-  ];
-
-  function esZona1(ciudad, departamento) {
-    if (!ciudad) return false;
-    const dep = (departamento || "").toLowerCase().trim();
-    const c = ciudad.toLowerCase().trim();
-    if (dep === "asunción (capital)" || dep === "asuncion (capital)") return true;
-    if (dep === "central" && !ZONA_1.some(z => c.includes(z) || z.includes(c))) return false;
-    return ZONA_1.some(z => c.includes(z) || z.includes(c));
-  }
-
-  function buildWhatsAppUrl(order) {
-    const txt = encodeURIComponent(
-      `¡Hola! Quiero comprar la Bolsa Impermeable XL Premium.\n\n` +
-      `*Producto:* ${order.producto}\n` +
-      `*Cantidad:* ${order.cantidad}\n` +
-      `*Total:* ${LandingUtils.formatGs(order.subtotal)}\n` +
-      `*Nombre:* ${order.nombre}\n` +
-      `*Teléfono:* ${order.telefono}\n` +
-      `*Departamento:* ${order.departamento}\n` +
-      `*Ciudad:* ${order.ciudad}\n` +
-      `*Dirección:* ${order.direccion}\n` +
-      (order.referencia !== "No informado" ? `*Referencia:* ${order.referencia}\n` : "") +
-      (order.color ? `*Color:* ${order.color}\n` : "") +
-      `\nQuedo atento a la confirmación.`
-    );
-    return `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${txt}`;
-  }
-
   function initScrollUi() {
     $$('[data-buy]').forEach((button) => {
       button.addEventListener("click", () => {
@@ -139,22 +105,106 @@
     });
   }
 
-  function initQuantity(form) {
+  const COLOR_HEX = { Negro: "#141414", Gris: "#9a9a9a", Rosa: "#e59ab8", Lila: "#b9a7e0" };
+
+  function maxQty() {
+    return Math.max(1, parseInt(CONFIG.MAX_QTY || 3, 10));
+  }
+
+  function clampQty(value) {
+    let qty = parseInt(value || "1", 10);
+    if (!Number.isFinite(qty) || qty < 1) qty = 1;
+    if (qty > maxQty()) qty = maxQty();
+    return qty;
+  }
+
+  // Precio por packs: 1u=219.000 · 2u=360.000 · 3u=480.000 (ver CONFIG.PRICE_TIERS)
+  function bundleTotal(qty) {
+    const tiers = CONFIG.PRICE_TIERS || {};
+    if (tiers[qty] != null) return tiers[qty];
+    const keys = Object.keys(tiers).map(Number).sort((a, b) => a - b);
+    if (!keys.length) return CONFIG.PRICE * qty;
+    const top = keys[keys.length - 1];
+    if (qty <= top) return tiers[qty] != null ? tiers[qty] : CONFIG.PRICE * qty;
+    const marginal = (tiers[top] - (tiers[top - 1] || 0)) || CONFIG.PRICE;
+    return tiers[top] + (qty - top) * marginal;
+  }
+
+  function initQuantity(form, onChange) {
     const input = form.elements.cantidad;
-    const total = $("#order-total");
-    if (!input || !total) return;
+    if (!input) return;
 
     const update = () => {
-      let qty = parseInt(input.value || "1", 10);
-      if (!Number.isFinite(qty) || qty < 1) qty = 1;
-      input.value = String(qty);
-      total.textContent = LandingUtils.formatGs(qty * CONFIG.PRICE);
+      input.value = String(clampQty(input.value));
+      if (typeof onChange === "function") onChange();
     };
 
-    $('[data-qty-minus]', form)?.addEventListener("click", () => { input.value = String(Math.max(1, Number(input.value || 1) - 1)); update(); });
-    $('[data-qty-plus]', form)?.addEventListener("click", () => { input.value = String(Number(input.value || 1) + 1); update(); });
+    $('[data-qty-minus]', form)?.addEventListener("click", () => { input.value = String(clampQty(Number(input.value || 1) - 1)); update(); });
+    $('[data-qty-plus]', form)?.addEventListener("click", () => { input.value = String(clampQty(Number(input.value || 1) + 1)); update(); });
     input.addEventListener("input", update);
     update();
+  }
+
+  function buildSummaryRenderer(form) {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const fmt = LandingUtils.formatGs;
+    return function renderSummary() {
+      const qty = clampQty(form.elements.cantidad?.value);
+      const total = bundleTotal(qty);
+      const unit = Math.round(total / qty);
+      const shipping = CONFIG.SHIPPING_VALUE || 0;
+      const oldTotal = (CONFIG.OLD_PRICE || unit) * qty + shipping;
+      const save = Math.max(0, oldTotal - total);
+      set("summary-qty", String(qty));
+      set("summary-unit", fmt(unit) + (qty > 1 ? " c/u" : ""));
+      set("summary-subtotal", fmt(total));
+      set("summary-save", "− " + fmt(save));
+      set("summary-old", fmt(oldTotal));
+      set("summary-total", fmt(total));
+
+      const color = form.elements.color?.value || "";
+      const chip = document.getElementById("summary-color-chip");
+      if (chip) {
+        if (color) {
+          chip.style.display = "inline-flex";
+          chip.innerHTML = `<span class="dot" style="background:${COLOR_HEX[color] || "#888"}"></span>${color}`;
+        } else {
+          chip.style.display = "none";
+        }
+      }
+    };
+  }
+
+  function initColorSwatches(form, renderSummary) {
+    const input = form.elements.color;
+    const label = document.getElementById("color-selected-label");
+    const thumb = document.getElementById("summary-thumb");
+    const swatches = $$(".color-swatch", form);
+
+    function reset() {
+      swatches.forEach((s) => s.classList.remove("selected"));
+      if (input) input.value = "";
+      if (label) label.textContent = "Tocá para elegir";
+      if (thumb) thumb.src = "assets/Imagen%20principal.jpg";
+    }
+
+    swatches.forEach((sw) => {
+      sw.addEventListener("click", () => {
+        const color = sw.getAttribute("data-color");
+        const img = sw.getAttribute("data-img");
+        swatches.forEach((s) => s.classList.remove("selected"));
+        sw.classList.add("selected");
+        if (input) input.value = color;
+        if (label) label.textContent = color;
+        if (thumb && img) {
+          thumb.style.opacity = "0.3";
+          setTimeout(() => { thumb.src = img; thumb.style.opacity = "1"; }, 120);
+        }
+        renderSummary();
+      });
+    });
+
+    return { reset };
   }
 
   function setSubmitting(button, submitting) {
@@ -162,12 +212,6 @@
     button.disabled = submitting;
     button.classList.toggle("is-loading", submitting);
     if (text) text.textContent = submitting ? "Enviando pedido..." : "FINALIZAR PEDIDO";
-    if (text && !submitting) {
-      const form = button.closest("form");
-      const ciudad = form?.elements?.ciudad?.value || "";
-      const depto = form?.elements?.departamento?.value || "";
-      text.textContent = (ciudad && !esZona1(ciudad, depto)) ? "CONSULTAR POR WHATSAPP" : "FINALIZAR PEDIDO";
-    }
   }
 
   function showFormMessage(message) {
@@ -209,7 +253,9 @@
 
   function collectOrder(form) {
     const value = (name) => LandingUtils.sanitizeInput(form.elements[name]?.value);
-    const quantity = Math.max(1, parseInt(value("cantidad") || "1", 10));
+    const quantity = clampQty(value("cantidad"));
+    const total = bundleTotal(quantity);
+    const unitPrice = Math.round(total / quantity);
     const campaign = LandingUtils.campaignData();
     const referenceParts = [];
     if (value("referencia")) referenceParts.push(value("referencia"));
@@ -220,9 +266,9 @@
     return LandingUtils.removeEmptyFields({
       id: `PY${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 90 + 10)}`,
       producto: CONFIG.PRODUCT_NAME,
-      precio: CONFIG.PRICE,
+      precio: unitPrice,
       cantidad: quantity,
-      subtotal: CONFIG.PRICE * quantity,
+      subtotal: total,
       ganancia: 0,
       nombre: value("nombre"),
       telefono: LandingUtils.formatParaguayPhone(value("telefono")),
@@ -286,42 +332,12 @@
     const button = $("#submit-order");
     if (!form || !button) return;
 
+    const renderSummary = buildSummaryRenderer(form);
     OrderValidation.attachLiveValidation(form);
-    initQuantity(form);
+    initQuantity(form, renderSummary);
+    const colorControl = initColorSwatches(form, renderSummary);
     initGeo(form);
-
-    const ciudadInput = form.elements.ciudad;
-    const paymentZone = $("#payment-zone");
-    const paymentZoneIcon = $("#payment-zone-icon");
-    const paymentZoneText = $("#payment-zone-text");
-    const whatsappZone = $("#whatsapp-zone");
-    const whatsappBtn = $("#whatsapp-btn");
-
-    function updateZone() {
-      const ciudad = ciudadInput?.value || "";
-      const depto = form.elements.departamento?.value || "";
-      const z1 = esZona1(ciudad, depto);
-      const submitText = $("[data-submit-text]", form);
-      if (paymentZone && z1) {
-        paymentZone.style.display = "flex";
-        paymentZone.style.background = "#1a2e1a";
-        paymentZone.style.border = "1px solid #1fa463";
-        paymentZoneIcon.textContent = "📦";
-        paymentZoneText.textContent = "Excelente — tu ciudad está en Zona 1. Recibís el pedido en tu casa y pagás contra entrega en efectivo o transferencia.";
-        if (submitText) submitText.textContent = "FINALIZAR PEDIDO";
-      } else if (paymentZone) {
-        paymentZone.style.display = "none";
-      }
-      if (whatsappZone) {
-        whatsappZone.style.display = (ciudad && !z1) ? "block" : "none";
-        if (submitText && ciudad && !z1) submitText.textContent = "CONSULTAR POR WHATSAPP";
-        else if (submitText && !ciudad) submitText.textContent = "FINALIZAR PEDIDO";
-      }
-    }
-
-    ciudadInput?.addEventListener("input", updateZone);
-    ciudadInput?.addEventListener("blur", updateZone);
-    updateZone();
+    renderSummary();
 
     let checkoutFromFormSent = false;
     form.addEventListener("focusin", () => {
@@ -329,7 +345,7 @@
       checkoutFromFormSent = true;
       const qty = Number(form.elements.cantidad?.value || 1);
       OrderAnalytics.beginCheckout(qty);
-      window.VisitorTracker?.trackEcommerce("begin_checkout", { revenue: qty * CONFIG.PRICE });
+      window.VisitorTracker?.trackEcommerce("begin_checkout", { revenue: bundleTotal(clampQty(qty)) });
     });
 
     form.elements.telefono?.addEventListener("blur", () => {
@@ -350,18 +366,6 @@
 
       const order = collectOrder(form);
 
-      if (!esZona1(order.ciudad, order.departamento)) {
-        setSubmitting(button, true);
-        showFormMessage("Redirigiendo a WhatsApp para coordinar el pago por adelantado...");
-        const waUrl = buildWhatsAppUrl(order);
-        window.open(waUrl, "_blank");
-        setTimeout(() => {
-          closeCheckoutPanel();
-          setTimeout(() => { form.reset(); showFormMessage(""); isSubmitting = false; setSubmitting(button, false); }, 350);
-        }, 500);
-        return;
-      }
-
       isSubmitting = true;
       setSubmitting(button, true);
 
@@ -374,7 +378,8 @@
         window.VisitorTracker?.trackEcommerce("generate_lead", { orderId, revenue: order.subtotal });
         window.VisitorTracker?.trackEcommerce("purchase", { orderId, revenue: order.subtotal });
         form.reset();
-        initQuantity(form);
+        colorControl.reset();
+        renderSummary();
         showModal(true, "Pedido recibido correctamente", "Gracias por tu compra. Nuestro equipo se comunicará contigo en breve para confirmar los datos de entrega.");
       } catch (error) {
         console.error(error);
@@ -437,6 +442,12 @@
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden", "true");
     });
+
+    const finalWa = $("#final-whatsapp");
+    if (finalWa) {
+      const txt = encodeURIComponent("¡Hola! Tengo una consulta sobre la Bolsa Impermeable XL Premium antes de hacer mi pedido.");
+      finalWa.href = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${txt}`;
+    }
 
     $("#checkout-panel-close")?.addEventListener("click", closeCheckoutPanel);
     $("#checkout-overlay")?.addEventListener("click", closeCheckoutPanel);

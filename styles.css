@@ -456,27 +456,146 @@ button.is-loading{opacity:.85;cursor:not-allowed!important}
   padding: 1.5rem;
 }
 
-.panel-summary {
-  background: #1e1e1e; border: 1px solid #333;
-  border-radius: 12px; padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
+/* ============================================
+   ORDER SUMMARY (Resumen de tu pedido)
+   ============================================ */
+.order-summary {
+  background: #1b1b1b; border: 1px solid #333;
+  border-radius: 14px; padding: 1rem 1.1rem;
+  margin-bottom: 0.85rem;
 }
-.panel-summary-row {
+.order-summary-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin-bottom: 0.85rem;
+}
+.order-summary-title {
+  font-family: 'Montserrat'; font-weight: 800;
+  font-size: 0.95rem; color: #fff;
+}
+.order-summary-badge {
+  background: rgba(31,164,99,.15); color: #3ad07f;
+  border: 1px solid rgba(58,208,127,.35);
+  font-size: 0.65rem; font-weight: 800; letter-spacing: .3px;
+  padding: 4px 8px; border-radius: 100px; white-space: nowrap;
+}
+.order-summary-product {
+  display: flex; gap: 12px; align-items: center;
+  padding-bottom: 0.85rem; margin-bottom: 0.85rem;
+  border-bottom: 1px solid #2c2c2c;
+}
+.order-summary-product img {
+  width: 58px; height: 58px; border-radius: 10px;
+  object-fit: cover; background: #262626; flex-shrink: 0;
+  transition: opacity .2s;
+}
+.order-summary-info { min-width: 0; }
+.order-summary-name {
+  font-weight: 700; font-size: 0.9rem; color: #fff;
+  line-height: 1.25; margin-bottom: 6px;
+}
+.order-summary-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.summary-chip {
+  background: #292929; color: #cfcfcf;
+  font-size: 0.72rem; font-weight: 600;
+  padding: 3px 9px; border-radius: 100px;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.summary-chip strong { color: #fff; }
+.summary-chip .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.35);
+}
+.order-summary-lines { display: flex; flex-direction: column; gap: 7px; }
+.summary-line {
   display: flex; justify-content: space-between;
-  align-items: center; margin-bottom: 0.5rem;
-  color: #c2c2c2; font-size: 0.9rem;
+  font-size: 0.85rem; color: #b6b6b6;
 }
-.panel-product-name { font-weight: 700; }
-.panel-product-price { font-weight: 800; color: #FF6A00; }
-.panel-divider { border: none; border-top: 1px solid #333; margin: 0.75rem 0; }
-.panel-summary-total {
-  display: flex; justify-content: space-between;
-  align-items: center; font-size: 0.95rem;
-  font-weight: 700; color: #fff;
+.summary-line span:last-child { color: #e6e6e6; font-weight: 600; }
+.summary-line--save span { color: #3ad07f !important; font-weight: 700; }
+.summary-free { color: #3ad07f !important; font-weight: 800; }
+.summary-ship s { color: #8a8a8a; font-weight: 500; margin-right: 4px; }
+.order-summary-total {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 0.9rem; padding-top: 0.85rem;
+  border-top: 1px solid #2c2c2c;
 }
-.panel-summary-total strong {
+.order-summary-total-left { display: flex; flex-direction: column; gap: 2px; }
+.order-summary-total-label { font-size: 0.8rem; color: #cfcfcf; font-weight: 600; }
+.order-summary-old {
+  font-size: 0.72rem; color: #8a8a8a; text-decoration: line-through;
+}
+.order-summary-total strong {
   font-family: 'Montserrat'; font-weight: 900;
-  font-size: 1.4rem; color: #FF6A00;
+  font-size: 1.5rem; color: #FF6A00; line-height: 1;
+}
+
+/* Cash-on-delivery reassurance */
+.cod-reassure {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: rgba(31,164,99,.1); border: 1px solid rgba(58,208,127,.3);
+  border-radius: 12px; padding: 0.8rem 0.95rem;
+  margin-bottom: 1.4rem; font-size: 0.82rem;
+  line-height: 1.45; color: #d4e9dc;
+}
+.cod-reassure strong { color: #fff; }
+.cod-reassure-icon { font-size: 1.2rem; line-height: 1.2; flex-shrink: 0; }
+
+/* Responsive 2-column form rows (stack on phones) */
+.checkout-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) {
+  .checkout-row2 { grid-template-columns: 1fr; }
+}
+
+/* Mobile checkout adaptation
+   iOS Safari hace zoom automático al enfocar inputs con fuente < 16px.
+   Forzamos 16px en el teléfono para evitar ese salto molesto. */
+@media (max-width: 600px) {
+  #order-form input,
+  #order-form select,
+  #order-form textarea,
+  #maps {
+    font-size: 16px !important;
+  }
+  /* Objetivos táctiles más cómodos (selectores específicos para ganar en cascada) */
+  .color-swatches .color-swatch { width: 40px; height: 40px; }
+  .qty-row .quantity-control { width: 150px; }
+  .qty-row .quantity-control button { height: 48px; width: 46px; flex: none; }
+}
+
+/* Field blocks */
+.field-block { display: flex; flex-direction: column; gap: 7px; }
+.field-label { font-size: 12px; font-weight: 600; color: #d6d6d6; }
+
+/* Color swatches */
+.color-swatches { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
+.color-swatch {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px solid #444; cursor: pointer; padding: 0;
+  background: var(--sw); position: relative;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.color-swatch:hover { transform: scale(1.08); }
+.color-swatch.selected {
+  border-color: #FF6A00;
+  box-shadow: 0 0 0 3px rgba(255,106,0,.25);
+}
+.color-swatch.selected::after {
+  content: "✓"; position: absolute; inset: 0;
+  display: grid; place-items: center;
+  color: #fff; font-size: 15px; font-weight: 900;
+  text-shadow: 0 1px 3px rgba(0,0,0,.6);
+}
+.color-selected-label { font-size: 0.8rem; color: #9a9a9a; margin-left: 4px; }
+
+/* Quantity row + hint */
+.qty-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.qty-row .quantity-control { width: 132px; flex-shrink: 0; }
+.qty-hint { font-size: 0.75rem; color: #9a9a9a; line-height: 1.3; flex: 1; min-width: 140px; }
+
+/* Checkout trust row */
+.checkout-trust {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px;
+  margin: 0.4rem 0 0.2rem; font-size: 0.72rem; color: #9a9a9a; font-weight: 600;
 }
 
 .panel-submit-btn {

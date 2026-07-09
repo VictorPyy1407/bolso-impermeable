@@ -1,7 +1,10 @@
 const CONFIG = {
   PRODUCT_NAME: "Bolsa Impermeable XL Premium",
   PRICE: 219000,
+  PRICE_TIERS: { 1: 219000, 2: 360000, 3: 480000 },
+  MAX_QTY: 3,
   OLD_PRICE: 299000,
+  SHIPPING_VALUE: 28000,
   CURRENCY: "PYG",
 
   SUPABASE_URL: "https://roruinqorwgolcrhhmpm.supabase.co",
