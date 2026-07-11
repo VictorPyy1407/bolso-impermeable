@@ -331,6 +331,37 @@ button.is-loading{opacity:.85;cursor:not-allowed!important}
 @media(max-width:560px){.maps-row{flex-direction:column}.btn-geo{padding:13px 14px}}
 
 /* ============================================
+   HERO LAYOUT
+   Móvil: título → imagen → precio/CTA (la foto se ve antes de decidir).
+   Desktop: dos columnas (texto izq. / imagen der.).
+   ============================================ */
+/* Móvil (por defecto): columna única en orden
+   imagen (grande, a todo el ancho) → título → precio+CTA → reseñas/beneficios. */
+.hero-grid { display: flex; flex-direction: column; gap: clamp(14px, 3.5vw, 24px); }
+.hero-media { order: 1; }
+.hero-copy  { order: 2; }
+.hero-cta   { order: 3; }
+.hero-feats { order: 4; }
+/* La foto ocupa todo el ancho disponible (se ajusta sola por aspect-ratio). */
+.hero-media .gallery-main-wrapper { max-width: none; margin: 0; }
+.hero-media .gallery-thumbs { max-width: none; }
+
+/* Desktop: dos columnas (texto izq. / imagen der. centrada). */
+@media (min-width: 860px) {
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.02fr 0.98fr;
+    column-gap: clamp(28px, 4vw, 48px); row-gap: 14px;
+    grid-template-areas: "copy media" "feats media" "cta media";
+    align-items: start;
+  }
+  .hero-copy  { grid-area: copy; }
+  .hero-feats { grid-area: feats; }
+  .hero-cta   { grid-area: cta; }
+  .hero-media { grid-area: media; align-self: center; }
+}
+
+/* ============================================
    HERO GALLERY (color thumbs)
    ============================================ */
 .gallery-main-wrapper {
@@ -539,6 +570,11 @@ button.is-loading{opacity:.85;cursor:not-allowed!important}
 }
 .cod-reassure strong { color: #fff; }
 .cod-reassure-icon { font-size: 1.2rem; line-height: 1.2; flex-shrink: 0; }
+/* Variante interior (pago por adelantado): ámbar, no verde. Solo aparece
+   cuando el cliente elige un departamento del interior. */
+.cod-reassure.is-interior {
+  background: rgba(255,176,0,.1); border-color: rgba(255,176,0,.35); color: #f0e2c8;
+}
 
 /* Responsive 2-column form rows (stack on phones) */
 .checkout-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }

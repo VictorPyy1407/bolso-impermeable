@@ -327,6 +327,27 @@
     });
   }
 
+  // Departamentos con pago contra entrega real (área metropolitana).
+  // El resto = interior → se coordina el pago por WhatsApp antes de despachar.
+  const METRO_DEPTS = ["Central", "Asunción (Capital)"];
+
+  function updateCodReassure(dept) {
+    const box = document.getElementById("cod-reassure");
+    const icon = document.getElementById("cod-reassure-icon");
+    const text = document.getElementById("cod-reassure-text");
+    if (!box || !text) return;
+    const isInterior = dept && METRO_DEPTS.indexOf(dept) === -1;
+    if (isInterior) {
+      box.classList.add("is-interior");
+      if (icon) icon.textContent = "📦";
+      text.innerHTML = '<strong>Envío al interior.</strong> Lo despachamos por empresa de encomiendas con número de seguimiento. Coordinamos el pago de forma segura por WhatsApp y te pasamos el comprobante de despacho antes de enviarlo.';
+    } else {
+      box.classList.remove("is-interior");
+      if (icon) icon.textContent = "💵";
+      text.innerHTML = '<strong>Pago contra entrega.</strong> No pagás nada ahora: recibís la bolsa en tu casa y pagás en efectivo, recién cuando la tengas en la mano. Antes de enviártela te escribimos por WhatsApp para confirmar todo.';
+    }
+  }
+
   function initForm() {
     const form = $("#order-form");
     const button = $("#submit-order");
@@ -338,6 +359,12 @@
     const colorControl = initColorSwatches(form, renderSummary);
     initGeo(form);
     renderSummary();
+
+    const deptSelect = form.elements.departamento;
+    if (deptSelect) {
+      deptSelect.addEventListener("change", () => updateCodReassure(deptSelect.value));
+      updateCodReassure(deptSelect.value);
+    }
 
     let checkoutFromFormSent = false;
     form.addEventListener("focusin", () => {
