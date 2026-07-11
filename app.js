@@ -223,13 +223,13 @@
 
   function publicSubmitError(error) {
     const message = String(error && error.message ? error.message : "");
-    if (message.includes("Configurá SUPABASE_URL")) {
-      return "Falta configurar Supabase en config.js para poder recibir pedidos.";
+    if (message.includes("Falta configurar Supabase")) {
+      return "Falta configurar Supabase para recibir pedidos.";
     }
-    return "No pudimos enviar tu pedido. Verificá tu conexión e intentá nuevamente.";
+    return message || "No pudimos guardar el pedido en el sistema, pero lo recibimos por WhatsApp.";
   }
 
-  function showModal(success, title, message) {
+  function showModal(success, title, message, waUrl) {
     const modal = $("#order-modal");
     const icon = $("#order-modal-icon");
     const titleEl = $("#order-modal-title");
@@ -241,11 +241,8 @@
     titleEl.textContent = title;
     messageEl.textContent = message;
     if (waBtn) {
-      waBtn.style.display = success ? "inline-flex" : "none";
-      if (success) {
-        const txt = encodeURIComponent("¡Hola! Acabo de realizar mi pedido de la Bolsa Impermeable XL Premium. Quedo atento a la confirmación.");
-        waBtn.href = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${txt}`;
-      }
+      waBtn.style.display = "inline-flex";
+      waBtn.href = waUrl || `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent("¡Hola! Acabo de realizar mi pedido de la Bolsa Impermeable XL Premium. Quedo atento a la confirmación.")}`;
     }
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
@@ -398,21 +395,28 @@
 
       try {
         const savedOrder = await OrderSupabase.saveOrder(order);
-        OrderTelegram.sendOrderNotification(order).catch((error) => console.warn("Telegram notification failed:", error));
+        OrderTelegram.sendOrderNotification(order).catch(function (e) { console.warn("Telegram notif failed:", e); });
         OrderAnalytics.lead(order.cantidad);
         OrderAnalytics.purchase(order.cantidad, savedOrder && savedOrder.id);
         const orderId = (savedOrder && savedOrder.id) || order.id;
-        window.VisitorTracker?.trackEcommerce("generate_lead", { orderId, revenue: order.subtotal });
-        window.VisitorTracker?.trackEcommerce("purchase", { orderId, revenue: order.subtotal });
+        window.VisitorTracker && window.VisitorTracker.trackEcommerce("generate_lead", { orderId: orderId, revenue: order.subtotal });
+        window.VisitorTracker && window.VisitorTracker.trackEcommerce("purchase", { orderId: orderId, revenue: order.subtotal });
         form.reset();
         colorControl.reset();
         renderSummary();
         showModal(true, "Pedido recibido correctamente", "Gracias por tu compra. Nuestro equipo se comunicará contigo en breve para confirmar los datos de entrega.");
       } catch (error) {
         console.error(error);
+        const waUrl = error.waFallback ? OrderSupabase.buildWhatsAppFallbackUrl(order) : null;
+        if (waUrl) {
+          window.open(waUrl, "_blank");
+        }
         const message = publicSubmitError(error);
         showFormMessage(message);
-        showModal(false, "No pudimos enviar tu pedido.", message);
+        showModal(false, "Pedido recibido por WhatsApp", message, waUrl);
+        form.reset();
+        colorControl.reset();
+        renderSummary();
         isSubmitting = false;
         setSubmitting(button, false);
       }
