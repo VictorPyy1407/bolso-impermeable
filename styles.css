@@ -312,16 +312,30 @@
 .btn-spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin-slow .7s linear infinite;margin-left:10px;vertical-align:middle}
 button.is-loading .btn-spinner{display:inline-block}
 button.is-loading{opacity:.85;cursor:not-allowed!important}
-.order-modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;padding:18px}
+.order-modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:18px}
 .order-modal.is-open{display:flex}
-.order-modal__box{width:min(440px,100%);background:#fff;color:#141414;border-radius:20px;padding:28px 22px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.35)}
-.order-modal__icon{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;font-size:34px}
-.order-modal__icon.ok{background:#e9f7ef;color:#1fa463}
-.order-modal__icon.fail{background:#fff0f0;color:#d64040}
-.order-modal h3{font-family:'Montserrat';font-weight:900;font-size:24px;margin:0 0 8px}
-.order-modal p{font-size:15px;line-height:1.55;color:#555;margin:0 0 20px}
-.order-modal button{border:0;background:#FF6A00;color:#fff;font-family:'Montserrat';font-weight:900;border-radius:12px;padding:14px 24px;cursor:pointer}
-.order-modal-wa{display:inline-flex;align-items:center;gap:6px;background:#25d366;color:#fff;text-decoration:none;font-family:'Montserrat';font-weight:800;font-size:14px;border-radius:12px;padding:12px 20px;margin-bottom:10px;transition:background .2s}
+.order-modal__box{width:min(430px,100%);background:#fff;color:#141414;border-radius:22px;padding:30px 24px 24px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:modal-pop .4s cubic-bezier(.16,1,.3,1)}
+@keyframes modal-pop{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+.order-modal__icon{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;font-size:38px;font-weight:900}
+.order-modal__icon.ok{background:#e9f7ef;color:#1fa463;box-shadow:0 0 0 8px rgba(31,164,99,.1)}
+.order-modal__icon.warn{background:#fff3ec;color:#FF6A00;box-shadow:0 0 0 8px rgba(255,106,0,.1);font-size:32px}
+.order-modal__icon.fail{background:#fff0f0;color:#d64040;box-shadow:0 0 0 8px rgba(214,64,64,.1)}
+.order-modal h3{font-family:'Montserrat';font-weight:900;font-size:23px;margin:0 0 8px;line-height:1.15}
+.order-modal p{font-size:14.5px;line-height:1.55;color:#555;margin:0 0 18px}
+/* Resumen del pedido dentro del modal */
+.order-modal__summary{background:#f7f6f9;border:1px solid #ececec;border-radius:14px;padding:14px 16px;text-align:left;margin:0 0 18px;display:flex;flex-direction:column;gap:9px}
+.oms-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13.5px;color:#6a6a6a}
+.oms-row strong{color:#141414;font-weight:700;text-align:right;display:inline-flex;align-items:center;gap:6px}
+.oms-row .oms-dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.15);flex:none}
+.oms-total{border-top:1px dashed #d9d9d9;padding-top:11px;margin-top:2px}
+.oms-total span{font-weight:700;color:#141414}
+.oms-total strong{font-family:'Montserrat';font-weight:900;font-size:18px;color:#FF6A00}
+#oms-id{font-variant-numeric:tabular-nums}
+/* Botones de acción, apilados a todo el ancho */
+.order-modal__actions{display:flex;flex-direction:column;gap:10px}
+.order-modal button#order-modal-accept{width:100%;border:0;background:#FF6A00;color:#fff;font-family:'Montserrat';font-weight:900;font-size:15px;border-radius:12px;padding:15px 24px;cursor:pointer;transition:background .2s,transform .15s}
+#order-modal-accept:hover{background:#e05f00;transform:translateY(-1px)}
+.order-modal-wa{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25d366;color:#fff;text-decoration:none;font-family:'Montserrat';font-weight:800;font-size:14.5px;border-radius:12px;padding:14px 20px;transition:background .2s}
 .order-modal-wa:hover{background:#1da851}
 .maps-row{display:flex;gap:8px;align-items:stretch}
 .maps-row input{flex:1;min-width:0}
@@ -336,12 +350,25 @@ button.is-loading{opacity:.85;cursor:not-allowed!important}
    Desktop: dos columnas (texto izq. / imagen der.).
    ============================================ */
 /* Móvil (por defecto): columna única en orden
-   imagen (grande, a todo el ancho) → título → precio+CTA → reseñas/beneficios. */
-.hero-grid { display: flex; flex-direction: column; gap: clamp(14px, 3.5vw, 24px); }
-.hero-media { order: 1; }
-.hero-copy  { order: 2; }
-.hero-cta   { order: 3; }
+   copy (badge + título) → precio + CTA → imagen → beneficios.
+   Objetivo: el usuario ve headline + precio + botón COMPRAR sin hacer scroll. */
+.hero-grid { display: flex; flex-direction: column; gap: clamp(12px, 3vw, 22px); }
+.hero-copy  { order: 1; }
+.hero-cta   { order: 2; }
+.hero-media { order: 3; }
 .hero-feats { order: 4; }
+
+/* Ajustes finos para que todo entre en la primera pantalla en el teléfono. */
+@media (max-width: 768px) {
+  /* H1 más compacto (inline usa clamp(30px,6.4vw,52px); lo bajamos). */
+  .hero-copy h1 { font-size: clamp(24px, 5.5vw, 32px) !important; margin-bottom: 10px !important; }
+  /* La descripción larga empuja el precio hacia abajo: la acortamos en mobile. */
+  .hero-copy p { font-size: 14px !important; margin-bottom: 0 !important; }
+  /* Botón COMPRAR bien grande y a todo el ancho. */
+  .hero-cta button[data-buy] { padding: 16px 24px; font-size: 17px; }
+  /* Menos aire arriba para ganar altura visible. */
+  .hero { padding-top: clamp(16px, 4vw, 28px) !important; }
+}
 /* La foto ocupa todo el ancho disponible (se ajusta sola por aspect-ratio). */
 .hero-media .gallery-main-wrapper { max-width: none; margin: 0; }
 .hero-media .gallery-thumbs { max-width: none; }
@@ -662,3 +689,139 @@ button.is-loading{opacity:.85;cursor:not-allowed!important}
 
 /* Hide old form section */
 #pedido { display: none; }
+
+/* ============================================
+   COUNTDOWN 24H BAR (debajo del announcement)
+   ============================================ */
+.countdown-bar {
+  background: #FF6A00; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+  padding: 8px 14px; text-align: center;
+  font-size: 13.5px; font-weight: 700;
+  letter-spacing: .2px;
+}
+.countdown-bar-time {
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-weight: 900; font-size: 15px;
+  background: rgba(0,0,0,.16); border-radius: 7px;
+  padding: 2px 9px; letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================
+   STOCK COUNTER (dentro del checkout, sobre el form)
+   ============================================ */
+.stock-counter {
+  background: rgba(224,64,64,.14);
+  border: 1px solid rgba(224,64,64,.4);
+  color: #ffb3b3; font-weight: 800;
+  font-size: .9rem; text-align: center;
+  padding: 10px 12px; border-radius: 12px;
+  margin-bottom: .9rem;
+}
+.stock-counter strong { color: #ff6a6a; font-weight: 900; }
+
+/* ============================================
+   SOCIAL PROOF TOASTS (esquina inferior izquierda)
+   ============================================ */
+.social-toast-wrap {
+  position: fixed; left: 16px; bottom: 16px;
+  z-index: 150; display: flex; flex-direction: column;
+  gap: 10px; max-width: min(320px, calc(100vw - 32px));
+  pointer-events: none;
+}
+.social-toast {
+  display: flex; align-items: center; gap: 11px;
+  background: #fff; color: #141414;
+  border: 1px solid #ececec; border-radius: 14px;
+  padding: 11px 14px; box-shadow: 0 14px 34px -12px rgba(0,0,0,.28);
+  transform: translateY(120%); opacity: 0;
+  animation: toast-in .45s cubic-bezier(.16,1,.3,1) forwards;
+}
+.social-toast.out { animation: toast-out .4s ease forwards; }
+.social-toast-emoji {
+  font-size: 20px; flex-shrink: 0;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: #fff3ec; display: grid; place-items: center;
+}
+.social-toast-body { line-height: 1.3; min-width: 0; }
+.social-toast-title { font-size: 13px; font-weight: 700; }
+.social-toast-title strong { color: #FF6A00; }
+.social-toast-sub { font-size: 11.5px; color: #8a8a8a; }
+@keyframes toast-in { from { transform: translateY(120%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes toast-out { from { transform: translateY(0); opacity: 1; } to { transform: translateY(120%); opacity: 0; } }
+@media (max-width: 600px) {
+  /* No tapar la barra de compra sticky del móvil. */
+  .social-toast-wrap { bottom: 86px; }
+}
+
+/* ============================================
+   QUANTITY CHIPS + per-unit price line
+   ============================================ */
+.qty-chips {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-top: 10px;
+}
+.qty-chip {
+  position: relative; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: #1e1e1e; border: 1.5px solid #333;
+  color: #e6e6e6; border-radius: 12px;
+  padding: 12px 6px 10px; text-align: center;
+  transition: border-color .15s, background .15s, transform .12s;
+}
+.qty-chip:hover { border-color: #FF6A00; transform: translateY(-1px); }
+.qty-chip .qty-chip-units { font-size: 12.5px; font-weight: 700; }
+.qty-chip .qty-chip-price {
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-weight: 800; font-size: 13px;
+}
+.qty-chip.active {
+  background: #FF6A00; border-color: #FF6A00; color: #fff;
+  box-shadow: 0 6px 16px rgba(255,106,0,.32);
+}
+.qty-chip.active .qty-chip-price { color: #fff; }
+.qty-chip-badge {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  background: #1fa463; color: #fff;
+  font-size: 9.5px; font-weight: 900; letter-spacing: .3px;
+  padding: 3px 8px; border-radius: 100px; white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(31,164,99,.4);
+}
+.unit-price-line {
+  margin-top: 10px; text-align: center;
+  font-size: 13px; font-weight: 700; color: #3ad07f;
+  min-height: 18px;
+}
+.unit-price-line .up-muted { color: #9a9a9a; font-weight: 600; }
+
+/* ============================================
+   OPTIONAL DELIVERY DETAILS (collapse)
+   ============================================ */
+.opt-details { display: flex; flex-direction: column; }
+.opt-toggle {
+  align-self: flex-start; cursor: pointer;
+  background: none; border: none;
+  color: #9a9a9a; font-size: 12.5px; font-weight: 600;
+  padding: 2px 0; text-decoration: underline;
+  text-underline-offset: 3px; transition: color .15s;
+}
+.opt-toggle:hover { color: #c9c9c9; }
+.opt-collapse {
+  max-height: 0; overflow: hidden;
+  transition: max-height .35s ease;
+}
+.opt-collapse-inner {
+  display: flex; flex-direction: column; gap: 10px;
+  padding-top: 10px;
+}
+
+/* Asterisco de campos obligatorios */
+.req { color: #FF6A00; font-weight: 800; }
+
+/* Microcopy debajo del botón de envío */
+.submit-microcopy {
+  text-align: center; font-size: 11px; color: #9a9a9a;
+  margin: 8px 0 0; line-height: 1.4;
+}

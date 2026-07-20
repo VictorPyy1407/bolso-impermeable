@@ -142,7 +142,25 @@
     $('[data-qty-minus]', form)?.addEventListener("click", () => { input.value = String(clampQty(Number(input.value || 1) - 1)); update(); });
     $('[data-qty-plus]', form)?.addEventListener("click", () => { input.value = String(clampQty(Number(input.value || 1) + 1)); update(); });
     input.addEventListener("input", update);
+    // Los chips actualizan #cantidad y disparan 'change'; escuchamos ese evento.
+    input.addEventListener("change", update);
     update();
+  }
+
+  // Chips de cantidad: reflejan CONFIG.PRICE_TIERS y setean #cantidad.
+  function initQuantityChips(form) {
+    const input = form.elements.cantidad;
+    if (!input) return;
+    const fmt = LandingUtils.formatGs;
+    $$("#qty-chips .qty-chip").forEach((chip) => {
+      const qty = clampQty(chip.getAttribute("data-qty"));
+      const priceEl = $('[data-chip-price]', chip);
+      if (priceEl) priceEl.textContent = fmt(bundleTotal(qty));
+      chip.addEventListener("click", () => {
+        input.value = String(qty);
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+    });
   }
 
   function buildSummaryRenderer(form) {
@@ -170,6 +188,23 @@
           chip.innerHTML = `<span class="dot" style="background:${COLOR_HEX[color] || "#888"}"></span>${color}`;
         } else {
           chip.style.display = "none";
+        }
+      }
+
+      // Chips de cantidad: marcar el activo según qty.
+      $$("#qty-chips .qty-chip").forEach((c) => {
+        c.classList.toggle("active", Number(c.getAttribute("data-qty")) === qty);
+      });
+
+      // Línea de precio por unidad + ahorro (base: precio unitario CONFIG.PRICE).
+      const unitLine = document.getElementById("unit-price-line");
+      if (unitLine) {
+        const base = CONFIG.PRICE || unit;
+        const saved = Math.max(0, base * qty - total);
+        if (qty <= 1 || saved <= 0) {
+          unitLine.innerHTML = `<span class="up-muted">Precio por unidad:</span> ${fmt(unit)}`;
+        } else {
+          unitLine.innerHTML = `${fmt(unit)} por unidad — ahorrás ${fmt(saved)} 🎉`;
         }
       }
     };
@@ -229,17 +264,45 @@
     return message || "No pudimos guardar el pedido en el sistema, pero lo recibimos por WhatsApp.";
   }
 
-  function showModal(success, title, message, waUrl) {
+  // kind: "ok" (verde) | "warn" (ámbar, recibido por WhatsApp) | "fail" (rojo).
+  // Acepta booleano por compatibilidad (true→ok, false→fail).
+  function showModal(kind, title, message, waUrl, details) {
     const modal = $("#order-modal");
     const icon = $("#order-modal-icon");
     const titleEl = $("#order-modal-title");
     const messageEl = $("#order-modal-message");
     const waBtn = $("#order-modal-wa");
     if (!modal || !icon || !titleEl || !messageEl) return;
-    icon.className = "order-modal__icon " + (success ? "ok" : "fail");
-    icon.textContent = success ? "✓" : "!";
+    const k = kind === true ? "ok" : kind === false ? "fail" : (kind || "ok");
+    const glyphs = { ok: "✓", warn: "💬", fail: "!" };
+    icon.className = "order-modal__icon " + k;
+    icon.textContent = glyphs[k] || "✓";
     titleEl.textContent = title;
     messageEl.textContent = message;
+
+    // Resumen del pedido (solo cuando hay datos, p.ej. compra exitosa).
+    const summary = document.getElementById("order-modal-summary");
+    if (summary) {
+      if (details) {
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        set("oms-id", details.id || "—");
+        set("oms-product", details.producto || CONFIG.PRODUCT_NAME);
+        set("oms-qty", String(details.cantidad || 1));
+        set("oms-total", LandingUtils.formatGs(details.total || 0));
+        const colorRow = document.getElementById("oms-color-row");
+        const colorEl = document.getElementById("oms-color");
+        if (details.color && colorRow && colorEl) {
+          colorRow.hidden = false;
+          colorEl.innerHTML = `<span class="oms-dot" style="background:${COLOR_HEX[details.color] || "#888"}"></span>${LandingUtils.escapeHtml(details.color)}`;
+        } else if (colorRow) {
+          colorRow.hidden = true;
+        }
+        summary.hidden = false;
+      } else {
+        summary.hidden = true;
+      }
+    }
+
     if (waBtn) {
       waBtn.style.display = "inline-flex";
       waBtn.href = waUrl || `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent("¡Hola! Acabo de realizar mi pedido de la Bolsa Impermeable XL Premium. Quedo atento a la confirmación.")}`;
@@ -353,6 +416,8 @@
     const renderSummary = buildSummaryRenderer(form);
     OrderValidation.attachLiveValidation(form);
     initQuantity(form, renderSummary);
+    initQuantityChips(form);
+    initOptionalDetails();
     const colorControl = initColorSwatches(form, renderSummary);
     initGeo(form);
     renderSummary();
@@ -401,10 +466,21 @@
         const orderId = (savedOrder && savedOrder.id) || order.id;
         window.VisitorTracker && window.VisitorTracker.trackEcommerce("generate_lead", { orderId: orderId, revenue: order.subtotal });
         window.VisitorTracker && window.VisitorTracker.trackEcommerce("purchase", { orderId: orderId, revenue: order.subtotal });
+        // Capturar datos para el resumen ANTES de resetear el formulario.
+        const summaryDetails = {
+          id: orderId,
+          producto: order.producto,
+          color: form.elements.color?.value || "",
+          cantidad: order.cantidad,
+          total: order.subtotal
+        };
         form.reset();
         colorControl.reset();
         renderSummary();
-        showModal(true, "Pedido recibido correctamente", "Gracias por tu compra. Nuestro equipo se comunicará contigo en breve para confirmar los datos de entrega.");
+        // Restaurar el botón: sin esto queda trabado en "Enviando pedido…".
+        isSubmitting = false;
+        setSubmitting(button, false);
+        showModal("ok", "¡Pedido recibido!", "Gracias por tu compra. Te escribimos por WhatsApp para confirmar los datos de entrega antes del envío.", null, summaryDetails);
       } catch (error) {
         console.error(error);
         const waUrl = error.waFallback ? OrderSupabase.buildWhatsAppFallbackUrl(order) : null;
@@ -413,7 +489,15 @@
         }
         const message = publicSubmitError(error);
         showFormMessage(message);
-        showModal(false, "Pedido recibido por WhatsApp", message, waUrl);
+        // Mismo resumen que en el flujo exitoso: el pedido se recibió igual (por WhatsApp).
+        const summaryDetails = {
+          id: order.id,
+          producto: order.producto,
+          color: form.elements.color?.value || "",
+          cantidad: order.cantidad,
+          total: order.subtotal
+        };
+        showModal("warn", "Pedido recibido por WhatsApp", message, waUrl, summaryDetails);
         form.reset();
         colorControl.reset();
         renderSummary();
@@ -421,6 +505,115 @@
         setSubmitting(button, false);
       }
     });
+  }
+
+  // Colapsable de "detalles de entrega (opcional)".
+  function initOptionalDetails() {
+    const toggle = document.getElementById("opt-toggle");
+    const panel = document.getElementById("opt-collapse");
+    if (!toggle || !panel) return;
+    const inner = panel.querySelector(".opt-collapse-inner");
+
+    function open() {
+      panel.style.maxHeight = (inner ? inner.scrollHeight : panel.scrollHeight) + "px";
+      toggle.setAttribute("aria-expanded", "true");
+      toggle.textContent = "− Ocultar detalles de entrega";
+    }
+    function close() {
+      // Fijamos la altura actual antes de colapsar para animar suave.
+      panel.style.maxHeight = panel.scrollHeight + "px";
+      requestAnimationFrame(() => { panel.style.maxHeight = "0px"; });
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.textContent = "+ Agregar detalles de entrega (opcional)";
+    }
+
+    // Una vez abierto del todo, permitimos que crezca (p.ej. al cargar ubicación).
+    panel.addEventListener("transitionend", () => {
+      if (toggle.getAttribute("aria-expanded") === "true") panel.style.maxHeight = "none";
+    });
+
+    toggle.addEventListener("click", () => {
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+      if (isOpen) close(); else open();
+    });
+  }
+
+  // Contador de urgencia de 24 h persistido en localStorage.
+  function initCountdown() {
+    const el = document.getElementById("countdown-time");
+    if (!el) return;
+    const KEY = "bolso_offer_deadline";
+    const DAY = 24 * 60 * 60 * 1000;
+
+    function deadline() {
+      let end = parseInt(localStorage.getItem(KEY) || "0", 10);
+      if (!Number.isFinite(end) || end <= Date.now()) {
+        end = Date.now() + DAY;
+        try { localStorage.setItem(KEY, String(end)); } catch (e) {}
+      }
+      return end;
+    }
+
+    const pad = (n) => String(n).padStart(2, "0");
+
+    function tick() {
+      let remaining = deadline() - Date.now();
+      if (remaining < 0) remaining = 0;
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
+      const s = Math.floor((remaining % 60000) / 1000);
+      el.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // Stock decreciente: 7 → 5 (45s) → 4 (90s) → 3 (3min).
+  function initStockCounter() {
+    const el = document.getElementById("stock-count");
+    if (!el) return;
+    const steps = [
+      { at: 45000, value: 5 },
+      { at: 90000, value: 4 },
+      { at: 180000, value: 3 }
+    ];
+    steps.forEach((step) => {
+      setTimeout(() => { el.textContent = String(step.value); }, step.at);
+    });
+  }
+
+  // Toasts de prueba social cada 25–50 s.
+  function initSocialToasts() {
+    const wrap = document.getElementById("social-toast-wrap");
+    if (!wrap) return;
+    const NAMES = ["Sofía", "María", "Camila", "Lucía", "Rocío", "Belén", "Fernanda", "Carlos", "Diego", "Javier", "Mateo", "Rodrigo", "Gustavo", "Alejandra", "Verónica", "Patricia", "Andrea", "Marcos", "Ramón", "Julia"];
+    const CITIES = ["Asunción", "Luque", "San Lorenzo", "Fernando de la Mora", "Capiatá", "Lambaré", "Ñemby", "Encarnación", "Ciudad del Este", "Mariano Roque Alonso", "Villa Elisa", "Itauguá", "Limpio", "Coronel Oviedo"];
+    const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    function show() {
+      const name = rand(NAMES);
+      const city = rand(CITIES);
+      const toast = document.createElement("div");
+      toast.className = "social-toast";
+      toast.innerHTML =
+        '<div class="social-toast-emoji">📦</div>' +
+        '<div class="social-toast-body">' +
+        `<div class="social-toast-title"><strong>${LandingUtils.escapeHtml(name)}</strong> de ${LandingUtils.escapeHtml(city)}</div>` +
+        '<div class="social-toast-sub">acaba de pedir · hace instantes</div>' +
+        '</div>';
+      wrap.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add("out");
+        setTimeout(() => toast.remove(), 450);
+      }, 4000);
+    }
+
+    function schedule() {
+      const delay = 25000 + Math.random() * 25000; // 25–50 s
+      setTimeout(() => { show(); schedule(); }, delay);
+    }
+    schedule();
   }
 
   function initGallery() {
@@ -466,6 +659,9 @@
     initFaqAndReveal();
     initForm();
     initGallery();
+    initCountdown();
+    initStockCounter();
+    initSocialToasts();
 
     $("#order-modal-accept")?.addEventListener("click", () => {
       const modal = $("#order-modal");

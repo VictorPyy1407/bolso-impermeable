@@ -33,6 +33,12 @@
   </div>
 </div>
 
+<!-- COUNTDOWN 24H BAR -->
+<div class="countdown-bar" id="countdown-bar">
+  <span class="countdown-bar-label">⏱️ Oferta termina en:</span>
+  <span class="countdown-bar-time" id="countdown-time">00:00:00</span>
+</div>
+
 <!-- STICKY HEADER -->
 <header id="site-header" style="position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid #eee;transition:box-shadow .25s">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px clamp(16px,4vw,32px)">
@@ -425,37 +431,35 @@
       </div>
     </div>
 
+    <div class="stock-counter" id="stock-counter">🔥 Solo quedan <strong id="stock-count">7</strong> unidades disponibles</div>
+
     <form id="order-form" novalidate style="display:flex;flex-direction:column;gap:10px">
       <div class="checkout-row2">
-        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Nombre *
+        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6"><span>Nombre <span class="req">*</span></span>
           <input name="nombre" required placeholder="Ej: María González" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
           <span class="field-error" data-error-for="nombre"></span>
         </label>
-        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Teléfono *
+        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6"><span>Teléfono <span class="req">*</span></span>
           <input name="telefono" required inputmode="tel" placeholder="0981 123 456" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
           <span class="field-error" data-error-for="telefono"></span>
         </label>
       </div>
       <div class="checkout-row2">
-        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Departamento *
+        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6"><span>Departamento <span class="req">*</span></span>
           <select name="departamento" required style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
             <option value="">Seleccioná...</option>
             <option>Central</option><option>Asunción (Capital)</option><option>Alto Paraná</option><option>Itapúa</option><option>Cordillera</option><option>Guairá</option><option>Caaguazú</option><option>Paraguarí</option><option>San Pedro</option><option>Caazapá</option><option>Misiones</option><option>Ñeembucú</option><option>Amambay</option><option>Canindeyú</option><option>Concepción</option><option>Presidente Hayes</option><option>Alto Paraguay</option><option>Boquerón</option>
           </select>
           <span class="field-error" data-error-for="departamento"></span>
         </label>
-        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Ciudad *
+        <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6"><span>Ciudad <span class="req">*</span></span>
           <input name="ciudad" required placeholder="Ej: Luque" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
           <span class="field-error" data-error-for="ciudad"></span>
         </label>
       </div>
-      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Dirección *
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6"><span>Dirección <span class="req">*</span></span>
         <input name="direccion" required placeholder="Calle, número, barrio" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
         <span class="field-error" data-error-for="direccion"></span>
-      </label>
-      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Barrio
-        <input name="barrio" placeholder="Ej: Villa Morra" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
-        <span class="field-error" data-error-for="barrio"></span>
       </label>
       <div class="field-block">
         <span class="field-label">Elegí el color</span>
@@ -476,21 +480,50 @@
             <input name="cantidad" id="cantidad" required inputmode="numeric" min="1" max="3" value="1" readonly style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none;text-align:center">
             <button type="button" data-qty-plus aria-label="Sumar cantidad">+</button>
           </div>
-          <span class="qty-hint">🔥 2 uds. = Gs. 360.000 · 3 uds. = Gs. 480.000 — te sale más barato por unidad</span>
         </div>
+        <div class="qty-chips" id="qty-chips" role="group" aria-label="Elegí la cantidad">
+          <button type="button" class="qty-chip" data-qty="1">
+            <span class="qty-chip-units">1 ud</span>
+            <span class="qty-chip-price" data-chip-price>Gs. 199.000</span>
+          </button>
+          <button type="button" class="qty-chip" data-qty="2">
+            <span class="qty-chip-badge">★ Popular</span>
+            <span class="qty-chip-units">2 uds</span>
+            <span class="qty-chip-price" data-chip-price>Gs. 360.000</span>
+          </button>
+          <button type="button" class="qty-chip" data-qty="3">
+            <span class="qty-chip-units">3 uds</span>
+            <span class="qty-chip-price" data-chip-price>Gs. 480.000</span>
+          </button>
+        </div>
+        <div class="unit-price-line" id="unit-price-line"></div>
         <span class="field-error" data-error-for="cantidad"></span>
       </div>
-      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Referencia
-        <input name="referencia" placeholder="Ej: casa portón blanco" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
-      </label>
-      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Ubicación (opcional)
-        <div class="maps-row">
-          <input id="maps" name="maps" placeholder="Pegá el link de tu ubicación" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
-          <button type="button" class="btn-geo" data-geo>📍 Usar mi ubicación</button>
+
+      <!-- DETALLES DE ENTREGA (opcional, colapsable) -->
+      <div class="opt-details">
+        <button type="button" class="opt-toggle" id="opt-toggle" aria-expanded="false" aria-controls="opt-collapse">+ Agregar detalles de entrega (opcional)</button>
+        <div class="opt-collapse" id="opt-collapse">
+          <div class="opt-collapse-inner">
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Barrio
+              <input name="barrio" placeholder="Ej: Villa Morra" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
+              <span class="field-error" data-error-for="barrio"></span>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Referencia
+              <input name="referencia" placeholder="Ej: casa portón blanco" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#d6d6d6">Ubicación
+              <div class="maps-row">
+                <input id="maps" name="maps" placeholder="Pegá el link de tu ubicación" style="background:#1e1e1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px 13px;font-size:14px;outline:none">
+                <button type="button" class="btn-geo" data-geo>📍 Usar mi ubicación</button>
+              </div>
+              <span class="field-hint" data-maps-hint>Ayuda a que la entrega llegue más rápido y sin errores.</span>
+              <span class="field-error" data-error-for="maps"></span>
+            </label>
+          </div>
         </div>
-        <span class="field-hint" data-maps-hint>Ayuda a que la entrega llegue más rápido y sin errores.</span>
-        <span class="field-error" data-error-for="maps"></span>
-      </label>
+      </div>
+
       <div class="checkout-trust">
         <span>🔒 Datos protegidos</span>
         <span>💵 Pagás al recibir</span>
@@ -505,6 +538,7 @@
         <span data-submit-text>FINALIZAR PEDIDO</span>
         <span class="btn-spinner"></span>
       </button>
+      <p class="submit-microcopy">Al completar tu pedido aceptás recibir confirmación por WhatsApp</p>
     </form>
   </div>
 </div>
@@ -526,6 +560,26 @@
   </div>
   <button data-buy="" style="cursor:pointer;flex:1;max-width:260px;border:none;background:#FF6A00;color:#fff;font-family:'Montserrat';font-weight:900;font-size:15px;padding:14px;border-radius:12px;box-shadow:0 6px 16px rgba(255,106,0,.35)">COMPRAR AHORA</button>
 </div>
-<div class="order-modal" id="order-modal" aria-hidden="true"><div class="order-modal__box" role="dialog" aria-modal="true" aria-labelledby="order-modal-title"><div class="order-modal__icon ok" id="order-modal-icon">✓</div><h3 id="order-modal-title">¡Pedido recibido!</h3><p id="order-modal-message">Gracias por tu compra. Te vamos a estar escribiendo por WhatsApp para confirmar los datos de entrega.</p><a class="order-modal-wa" id="order-modal-wa" href="#" target="_blank" rel="noreferrer" style="display:none">💬 Consultar por WhatsApp</a><button type="button" id="order-modal-accept">Aceptar</button></div></div>
+<!-- SOCIAL PROOF TOASTS -->
+<div class="social-toast-wrap" id="social-toast-wrap" aria-live="polite"></div>
+
+<div class="order-modal" id="order-modal" aria-hidden="true">
+  <div class="order-modal__box" role="dialog" aria-modal="true" aria-labelledby="order-modal-title">
+    <div class="order-modal__icon ok" id="order-modal-icon">✓</div>
+    <h3 id="order-modal-title">¡Pedido recibido!</h3>
+    <p id="order-modal-message">Gracias por tu compra. Te vamos a estar escribiendo por WhatsApp para confirmar los datos de entrega.</p>
+    <div class="order-modal__summary" id="order-modal-summary" hidden>
+      <div class="oms-row"><span>N° de pedido</span><strong id="oms-id">—</strong></div>
+      <div class="oms-row"><span>Producto</span><strong id="oms-product">—</strong></div>
+      <div class="oms-row" id="oms-color-row"><span>Color</span><strong id="oms-color">—</strong></div>
+      <div class="oms-row"><span>Cantidad</span><strong id="oms-qty">—</strong></div>
+      <div class="oms-row oms-total"><span>Total a pagar al recibir</span><strong id="oms-total">—</strong></div>
+    </div>
+    <div class="order-modal__actions">
+      <a class="order-modal-wa" id="order-modal-wa" href="#" target="_blank" rel="noreferrer" style="display:none">💬 Consultar por WhatsApp</a>
+      <button type="button" id="order-modal-accept">Aceptar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
