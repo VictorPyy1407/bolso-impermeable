@@ -1,0 +1,379 @@
+1: <!DOCTYPE html>
+2: <html lang="es-PY">
+3: <head>
+4:   <meta charset="UTF-8">
+5:   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6:   <title>Bolso de Viaje Expandible Impermeable | VG Shop Py</title>
+7:   <meta name="description" content="Bolso de viaje expandible e impermeable multiuso con delivery gratis a Asunción y Central y pago al recibir.">
+8:   <link rel="icon" type="image/png" href="img/VGshop Logo.png">
+9:   <link rel="apple-touch-icon" href="img/VGshop Logo.png">
+10:   <link rel="preconnect" href="https://fonts.googleapis.com">
+11:   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+12:   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+13:   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+14:   <link rel="stylesheet" href="styles.css">
+15: 
+16:   <!-- Google Tag Manager -->
+17:   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+18:   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+19:   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+20:   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+21:   })(window,document,'script','dataLayer','GTM-MWP3LRKX');</script>
+22:   <!-- End Google Tag Manager -->
+23: 
+24:   <!-- Google Analytics 4 -->
+25:   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8WM6CYEB73"></script>
+26:   <script>
+27:     window.dataLayer = window.dataLayer || [];
+28:     function gtag(){dataLayer.push(arguments);}
+29:     gtag('js', new Date());
+30:     gtag('config', 'G-8WM6CYEB73', { send_page_view: false });
+31:   </script>
+32: 
+33:   <!-- Meta Pixel Code -->
+34:   <script>
+35:   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+36:   n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+37:   n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+38:   t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+39:   document,'script','https://connect.facebook.net/en_US/fbevents.js');
+40:   fbq('init', '2412226475899711');
+41:   fbq('track', 'PageView');
+42:   </script>
+43:   <noscript><img height="1" width="1" style="display:none"
+44:   src="https://www.facebook.com/tr?id=2412226475899711&ev=PageView&noscript=1"
+45:   /></noscript>
+46:   <!-- End Meta Pixel Code -->
+47: </head>
+48: <body>
+49:   <!-- Google Tag Manager (noscript) -->
+50:   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MWP3LRKX"
+51:   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+52:   <!-- End Google Tag Manager (noscript) -->
+53: 
+54:   <header class="topbar">
+55:     <a class="brand" href="#">
+56:       <img class="brand-logo" src="img/VGshop Logo.png" alt="VG Shop Py">
+57:       <span>VG Shop Py</span>
+58:     </a>
+59:     <div class="header-status" aria-label="Pedido por formulario">
+60:       <span></span>
+61:       Pedido seguro por la página
+62:     </div>
+63:   </header>
+64: 
+65:   <main>
+66:     <section class="hero" id="producto" data-page="product">
+67:       <div class="product-grid">
+68:         <div class="gallery" aria-label="Galería de producto">
+69:           <button class="gallery-arrow gallery-arrow-left" type="button" aria-label="Imagen anterior">‹</button>
+70:           <button class="gallery-arrow gallery-arrow-right" type="button" aria-label="Siguiente imagen">›</button>
+71: <div class="main-image">
+72:             <img id="mainProductImage" src="img/PROD20260423_69ea3f74e8023.jpg" alt="Bolso de Viaje Expandible">
+73:           </div>
+74:           <div class="thumbs">
+75:             <button class="thumb active" type="button" data-image="img/PROD20260423_69ea3f74e8023.jpg" aria-label="Ver producto">
+76:               <img src="img/PROD20260423_69ea3f74e8023.jpg" alt="Bolso de Viaje Expandible">
+77:             </button>
+78:   </header>
+79: 
+80:   <main>
+81:     <section class="hero" id="producto" data-page="product">
+82:       <div class="product-grid">
+83:         <div class="gallery" aria-label="Galería de producto">
+84:           <button class="gallery-arrow gallery-arrow-left" type="button" aria-label="Imagen anterior">‹</button>
+85:           <button class="gallery-arrow gallery-arrow-right" type="button" aria-label="Siguiente imagen">›</button>
+86: <div class="main-image">
+87:             <img id="mainProductImage" src="img/PROD20260423_69ea3f74e8023.jpg" alt="Bolso de Viaje Expandible">
+88:           </div>
+89:           <div class="thumbs">
+90:             <button class="thumb active" type="button" data-image="img/PROD20260423_69ea3f74e8023.jpg" aria-label="Ver producto">
+91:               <img src="img/PROD20260423_69ea3f74e8023.jpg" alt="Bolso de Viaje Expandible">
+92:             </button>
+93:             <button class="thumb" type="button" data-image="img/rosa.jpeg" aria-label="Ver bolso Rosa">
+94:               <img src="img/rosa.jpeg" alt="Bolso Rosa">
+95:             </button>
+96:             <button class="thumb" type="button" data-image="img/Lila.jpeg" aria-label="Ver bolso Lila">
+97:               <img src="img/Lila.jpeg" alt="Bolso Lila">
+98:             </button>
+99:             <button class="thumb" type="button" data-image="img/Gris.jpg" aria-label="Ver bolso Gris">
+100:               <img src="img/Gris.jpg" alt="Bolso Gris">
+101:             </button>
+102:           </div>
+103:         </div>
+104: 
+105:         <article class="details">
+106:           <div class="offer-card" aria-label="Oferta por tiempo limitado">
+107:             <span class="clock" aria-hidden="true"></span>
+108:             <span>¡Oferta por tiempo limitado!</span>
+109:           </div>
+110: 
+111:           <div class="benefit-ticker" aria-label="Beneficios de compra">
+112:             <div class="benefit-track">
+113:               <span>Envío Gratis Asunción y Central</span>
+114:               <span>Pagás al recibir</span>
+115:               <span>Entrega en 24-48 hs</span>
+116:               <span>Stock disponible</span>
+117:               <span>Envío Gratis Asunción y Central</span>
+118:               <span>Pagás al recibir</span>
+119:               <span>Entrega en 24-48 hs</span>
+120:               <span>Stock disponible</span>
+121:             </div>
+122:           </div>
+123: 
+124:           <h1>Bolso de Viaje Expandible Impermeable</h1>
+125:           <div class="price-row">
+126:             <span class="price">Gs. 199.000</span>
+127:             <span class="old-price">Gs. 300.000</span>
+128:             <span class="discount">33% Descuento</span>
+129:           </div>
+130: 
+131:           <div class="actions">
+132:             <a class="primary-cta" id="pedido" href="#checkout">
+133:               <svg class="bag-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+134:                 <path d="M7 9V7a5 5 0 0 1 10 0v2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+135:                 <path d="M5.4 9h13.2l-.9 10.1A2.1 2.1 0 0 1 15.6 21H8.4a2.1 2.1 0 0 1-2.1-1.9L5.4 9Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+136:                 <path d="M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+137:               </svg>
+138:               <span>Reservar mi bolso ahora<br><small>Completá el formulario y pagás al recibir</small></span>
+139:             </a>
+140:           </div>
+141: 
+142:           <div class="trust-row" aria-label="Beneficios de compra">
+143:             <span>Envío seguro</span>
+144:             <span>Compra protegida</span>
+145:             <span>Atención al cliente</span>
+146:           </div>
+147: 
+148:           <section class="description">
+149:             <h2>Descripción</h2>
+150:             <p><strong>Bolso de Viaje Expandible e Impermeable Multiuso</strong><br>
+151:             El compañero perfecto para tus viajes, gimnasio o escapadas de fin de semana. Este bolso destaca por su diseño inteligente con base expandible con cremallera, que te permite ampliar su capacidad cuando lo necesites. Está confeccionado en tela Oxford de alta densidad, completamente resistente al desgaste e impermeable, manteniendo tus pertenencias secas y protegidas.<br><br>
+152:             <strong>Características destacadas:</strong><br>
+153:             • <strong>Capacidad Expandible:</strong> Se expande fácilmente agregando hasta 12 cm de altura en su parte inferior.<br>
+154:             • <strong>Separación Húmedo/Seco:</strong> Cuenta con un bolsillo impermeable interno para guardar ropa mojada, toallas o artículos de tocador.<br>
+155:             • <strong>Compartimento para Calzado:</strong> Espacio independiente con cremallera lateral para calzados, manteniéndolos separados de tu ropa limpia.<br>
+156:             • <strong>Banda de Sujeción (Trolley Sleeve):</strong> Deslizalo fácilmente sobre la manija de tu maleta con ruedas para moverte cómodamente en aeropuertos.<br>
+157:             • <strong>Multiuso y Portátil:</strong> Ideal para viajes, entrenamiento deportivo, camping o uso diario. Apto como equipaje de mano en cabina.</p>
+158:             <div class="conversion-points" aria-label="Razones para comprar">
+159:               <span>Sin pago adelantado en Asunción y Central</span>
+160:               <span>Confirmamos el pedido antes de enviar</span>
+161:               <span>Cambio por defecto de fábrica</span>
+162:             </div>
+163: </section>
+164:         </article>
+165:       </div>
+166:     </section>
+167: 
+168:     <section class="checkout-page" id="checkout" data-page="checkout" hidden>
+169:       <div class="checkout-shell">
+170:         <a class="back-link" href="#producto" aria-label="Volver al producto">← Volver al Producto</a>
+171:         <button class="checkout-close" type="button" aria-label="Cerrar checkout">×</button>
+172: 
+173:         <div class="checkout-header">
+174:           <small>PAGO SEGURO CONTRA ENTREGA</small>
+175:           <h2>Finalizar Pedido</h2>
+176:         </div>
+177: 
+178:         <form class="checkout-form" id="purchaseForm" data-order-form>
+179:           <section class="checkout-product">
+180:             <img id="checkoutProductImage" src="img/PROD20260423_69ea3f74e8023.jpg" alt="Bolso de Viaje Expandible">
+181:             <div>
+182:               <strong>Bolso de Viaje Expandible</strong>
+183:               <span id="productPriceTop">Gs. 199.000</span>
+184:               <small>Envío gratis a Asunción y Central - Pagás al recibir</small>
+185:             </div>
+186:           </section>
+187: 
+188:           <label>
+189:             <span>Nombre y Apellido</span>
+190:             <input type="text" name="name" autocomplete="name" required placeholder="Ej: María González">
+191:           </label>
+192: 
+193:           <label>
+194:               <span>Teléfono de contacto</span>
+195:             <input type="tel" name="phone" autocomplete="tel" required placeholder="Ej: 0981 123 456">
+196:           </label>
+197: 
+198:           <label>
+199:             <span>Ciudad</span>
+200:             <input type="text" name="city" id="cityInput" autocomplete="address-level2" required placeholder="Ej: Asunción">
+201:           </label>
+202: 
+203:           <div class="delivery-notice" id="deliveryNotice">
+204:             <strong>Formas de pago:</strong> Asunción y Central: envío gratis y pago contra entrega. Interior: te contactamos para coordinar el abono antes del despacho.
+205:           </div>
+206: 
+207:           <label>
+208:             <span>Color del Bolso</span>
+209:             <select name="color" id="colorSelect">
+210:               <option value="Rosa">Rosa (Fucsia)</option>
+211:               <option value="Lila">Lila</option>
+212:               <option value="Gris">Gris</option>
+213:             </select>
+214:           </label>
+215: 
+216:           <label>
+217:             <span>Cantidad</span>
+218:             <select name="quantity" id="quantitySelect">
+219:               <option value="1" data-price="199000">1 unidad - Gs. 199.000</option>
+220:               <option value="2" data-price="369000">2 unidades - Gs. 369.000</option>
+221:               <option value="3" data-price="525000">3 unidades - Gs. 525.000</option>
+222: 
+223:             </select>
+224:           </label>
+225: 
+226:           <details class="optional-fields">
+227:             <summary>Más detalles</summary>
+228:             <label>
+229:               <span>Dirección</span>
+230:               <textarea name="address" rows="2" autocomplete="street-address" placeholder="Calle, número, zona"></textarea>
+231:             </label>
+232:             <label>
+233:               <span>Barrio</span>
+234:               <input type="text" name="neighborhood" placeholder="Ej: Villa Morra">
+235:             </label>
+236:             <label>
+237:               <span>Referencia</span>
+238:               <input type="text" name="notes" placeholder="Ej: Casa color blanco, portón negro">
+239:             </label>
+240:             <label class="map-field">
+241:               <span>Ubicación Maps</span>
+242:               <div class="location-row">
+243:                 <input type="url" name="map" id="mapsInput" placeholder="Pegá enlace de Google Maps" readonly>
+244:                 <button type="button" data-open-map>Marcar en mapa</button>
+245:               </div>
+246:             </label>
+247:           </details>
+248: 
+249:           <button class="order-button pulse-buy" type="submit">
+250:             <span class="btn-text">Confirmar Pedido</span>
+251:             <span class="btn-loader hidden"><span class="spinner"></span> Procesando...</span>
+252:           </button>
+253: 
+254:           <section class="order-summary">
+255:             <h3>Resumen del pedido</h3>
+256:             <dl>
+257:               <div><dt>Producto elegido</dt><dd>Bolso de Viaje Expandible - <span id="summaryQuantityText">1 unidad</span></dd></div>
+258:               <div><dt>Color</dt><dd id="summaryColor">Rosa</dd></div>
+259:               <div><dt>Cantidad</dt><dd id="summaryQuantity">1 unidad</dd></div>
+260:               <div><dt>Envío</dt><dd class="free">Gratis (Asunción y Central)</dd></div>
+261:               <div><dt>Total a pagar</dt><dd class="total" id="summaryTotal">Gs. 199.000</dd></div>
+262:             </dl>
+263:             <p id="paymentNote">No pagás nada ahora. Registrás el pedido y te contactamos para confirmar antes del envío.</p>
+264:           </section>
+265: 
+266:           <small class="secure-note">Plataforma segura. Tus datos están protegidos</small>
+267:           <p class="form-error" id="formError" role="alert"></p>
+268:         </form>
+269: 
+270:       </div>
+271:     </section>
+272: 
+273:     <section class="map-modal hidden" id="mapModal" aria-modal="true" role="dialog" aria-labelledby="mapTitle">
+274:       <div class="map-dialog">
+275:         <div class="map-header">
+276:           <h2 id="mapTitle">Buscar y marcar en el mapa</h2>
+277:           <button type="button" data-close-map aria-label="Cerrar mapa">×</button>
+278:         </div>
+279:         <div class="map-search">
+280:           <input type="search" id="mapSearch" placeholder="Buscar dirección o lugar">
+281:           <button type="button" id="mapSearchButton">Buscar</button>
+282:         </div>
+283:         <div class="map-picker" id="mapPicker" aria-label="Mapa para seleccionar ubicación"></div>
+284:         <div class="map-link-row">
+285:           <input type="url" id="mapLinkInput" placeholder="Pegar enlace de Google Maps">
+286:           <a id="mapOpenLink" href="https://www.google.com/maps" target="_blank" rel="noopener">Abrir ↗</a>
+287:         </div>
+288:         <p class="map-error" id="mapError" role="alert"></p>
+289:         <button type="button" class="map-confirm" id="mapConfirm">Confirmar ubicación</button>
+290:       </div>
+291:     </section>
+292: 
+293:     <section class="info-banners" aria-label="Información del producto">
+294:       <img src="img/Bolson1.png" alt="Bolso de viaje expandible vista frontal">
+295:       <img src="img/Bolson2.png" alt="Sleeve trasero del bolso para sujetar a maletas">
+296:       <img src="img/Bolson3.png" alt="Vistas expandida y normal del bolso">
+297:       <img src="img/Bolson4.png" alt="Compartimento impermeable interno y de calzado">
+298:     </section>
+299: 
+300:     <section class="benefits-section" id="beneficios">
+301:       <div class="section-heading">
+302:         <span>Beneficios</span>
+303:         <h2>Más capacidad, más orden y menos preocupaciones</h2>
+304:         <p>Diseñado para viajes, gimnasio, trabajo y escapadas de fin de semana.</p>
+305:       </div>
+306:       <div class="benefits-grid">
+307:         <article class="benefit-card"><h3>Capacidad expandible</h3><p>Ampliá el espacio cuando necesitás llevar más ropa, accesorios o compras.</p></article>
+308:         <article class="benefit-card"><h3>Impermeable</h3><p>Ayuda a proteger tus pertenencias de salpicaduras, humedad y lluvia ligera.</p></article>
+309:         <article class="benefit-card"><h3>Separación húmedo/seco</h3><p>Guardá toallas, ropa mojada o artículos personales sin mezclar todo.</p></article>
+310:         <article class="benefit-card"><h3>Compartimento para calzado</h3><p>Llevá tus zapatos separados de la ropa limpia de forma práctica.</p></article>
+311:         <article class="benefit-card"><h3>Ideal para equipaje de mano</h3><p>Compacto, liviano y fácil de llevar para viajes cortos o uso diario.</p></article>
+312:         <article class="benefit-card"><h3>Organización inteligente</h3><p>Bolsillos y espacios pensados para encontrar todo más rápido.</p></article>
+313:       </div>
+314:     </section>
+315: 
+316:     <section class="comparison-section" id="comparativa">
+317:       <div class="section-heading">
+318:         <span>Comparativa</span>
+319:         <h2>¿Por qué elegir este bolso impermeable?</h2>
+320:         <p>Una solución más práctica que un bolso común.</p>
+321:       </div>
+322:       <div class="comparison-grid">
+323:         <article class="comparison-card winner"><h3>Bolso Expandible</h3><ul><li>✓ Más capacidad cuando la necesitás</li><li>✓ Bolsillo húmedo/seco</li><li>✓ Compartimento para calzado</li><li>✓ Material impermeable</li></ul></article>
+324:         <div class="comparison-vs">VS</div>
+325:         <article class="comparison-card"><h3>Bolso común</h3><ul><li>× Espacio fijo</li><li>× Todo queda mezclado</li><li>× Sin división para calzado</li><li>× Menor protección ante humedad</li></ul></article>
+326:       </div>
+327:     </section>
+328: 
+329:     <section class="proof-section" id="confianza">
+330:       <div class="section-heading">
+331:         <span>Compra tranquila</span>
+332:         <h2>Antes de enviar, confirmamos todo contigo</h2>
+333:         <p>Tu pedido queda registrado por la página. Luego verificamos color, ciudad, dirección y horario disponible.</p>
+334:       </div>
+335:       <div class="proof-grid">
+336:         <article class="proof-card"><h3>Pedido sin pago inicial</h3><p>En Asunción y Central pagás recién al recibir el bolso.</p></article>
+337:         <article class="proof-card"><h3>Entrega coordinada</h3><p>No enviamos a ciegas: primero confirmamos los datos cargados en el formulario.</p></article>
+338:         <article class="proof-card"><h3>Defecto cubierto</h3><p>Si el producto llega con defecto de fábrica, gestionamos el cambio.</p></article>
+339:       </div>
+340:     </section>
+341: 
+342:     <section class="faq-section" id="preguntas">
+343:       <div class="section-heading">
+344:         <span>Preguntas frecuentes</span>
+345:         <h2>Resolvé tus dudas antes de reservar</h2>
+346:       </div>
+347:       <div class="faq-list">
+348:         <details open><summary>¿El bolso es totalmente impermeable?</summary><p>Es resistente a salpicaduras, humedad y lluvia ligera. No está pensado para sumergirse en agua.</p></details>
+349:         <details><summary>¿Puedo elegir color?</summary><p>Sí. Elegís Rosa, Lila o Gris en el formulario antes de confirmar.</p></details>
+350:         <details><summary>¿Cuándo pago?</summary><p>En Asunción y Central pagás al recibir. Para interior te contactamos para coordinar el despacho.</p></details>
+351:         <details><summary>¿Sirve para gimnasio y viajes?</summary><p>Sí. Tiene espacio expandible, separación húmedo/seco y compartimento para calzado.</p></details>
+352:       </div>
+353:     </section>
+354:   </main>
+355: 
+356:   <footer class="footer">
+357:     <p>© 2026 VG Shop Py - Todos los derechos reservados</p>
+358:   </footer>
+359: 
+360:   <a class="float-cta pulse-buy" href="#checkout" aria-label="Reservar Bolso de Viaje Expandible">
+361:     <span>Reservar Ahora</span>
+362:     <small>Gs. 199.000 - Confirmación por formulario</small>
+363:   </a>
+364: 
+365:   <section class="confirmation hidden" id="confirmation" aria-live="polite" aria-modal="true" role="dialog">
+366:     <div class="confirmation-card">
+367:       <div class="success-icon">✓</div>
+368:       <h2>¡Pedido recibido!</h2>
+369:       <p>Muchas gracias por tu compra. Tu pedido <strong id="orderNumber">#000000</strong> ya fue registrado y será entregado en un plazo de 24 a 72 horas.</p>
+370:       <p>Tu <strong>Bolso de Viaje Expandible</strong> queda reservado. Nos pondremos en contacto contigo para confirmar color, ciudad y entrega antes de enviarlo.</p>
+371:       <p id="confirmationPaymentText">Recordá que el pago se realiza al recibir el producto. Te hablaremos al número <strong id="confirmationPhone">---</strong>.</p>
+372:       <button type="button" class="confirmation-btn" data-close-confirmation>Entendido</button>
+373:     </div>
+374:   </section>
+375: 
+376:   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+377:   <script src="script.js?v=20260705-live"></script>
+378: </body>
+379: </html>

@@ -1,21 +1,77 @@
-const CONFIG = {
-  PRODUCT_NAME: "Bolsa Impermeable XL Premium",
-  PRICE: 199000,
-  PRICE_TIERS: { 1: 199000, 2: 360000, 3: 480000 },
-  MAX_QTY: 3,
-  OLD_PRICE: 299000,
-  SHIPPING_VALUE: 28000,
-  CURRENCY: "PYG",
+/* ============================================================
+   CONFIGURACIÓN DEL PRODUCTO — Mopa Triangular 360°
+   VG Shop · Editá SOLO este archivo para precio, textos, IDs e imágenes.
+   ============================================================ */
+const PRODUCT_CONFIG = {
+  id: "mopa-triangular-360",
+  origin: "landing_mopa_triangular",
+  category: "Hogar / Limpieza",
+  brand: "VG Shop",
+  name: "Mopa Triangular 360°",
+  shortName: "Mopa 360°",
 
-  SUPABASE_URL: "https://roruinqorwgolcrhhmpm.supabase.co",
-  SUPABASE_ANON_KEY: "sb_publishable_aRPb1yNunMEheat00BxwtQ_Uft732KJ",
-  SUPABASE_TABLE: "pedidos_web",
-  ORIGIN: "landing_bolso_impermeable",
+  // Precio ÚNICO visible en toda la página (guaraníes, sin puntos).
+  price: 130000,
+  currency: "PYG",
 
-  TELEGRAM_BOT_TOKEN: "PEGAR_AQUI",
-  TELEGRAM_CHAT_ID: "PEGAR_AQUI",
+  // ====== ANALYTICS (reutilizados de la infra VG Shop) ======
+  metaPixelId: "2412226475899711",       // Meta Pixel VG Shop (activo)
+  tiktokPixelId: "D9C46VBC77U7PB56S7NG", // TikTok Pixel (activo)
+  ga4Id: "G-8WM6CYEB73",                 // GA4 real compartido VG Shop
+  gtmId: "GTM-XXXXXXX",                  // ← PLACEHOLDER: pegá tu contenedor GTM (opcional)
+  clarityId: "PEGAR_AQUI",               // ← PLACEHOLDER: Microsoft Clarity ID (opcional)
+  whatsapp: "595972738779",              // Contacto WhatsApp VG Shop
 
-  META_PIXEL_ID: "2412226475899711",
-  GA4_ID: "G-8WM6CYEB73",
-  WHATSAPP_NUMBER: "595972738779"
+  // ====== BACKEND (Supabase compartido con las demás landings) ======
+  supabaseUrl: "https://roruinqorwgolcrhhmpm.supabase.co",
+  supabaseAnonKey: "sb_publishable_aRPb1yNunMEheat00BxwtQ_Uft732KJ",
+  supabaseTable: "pedidos_web",
+
+  // ====== IMAGEN PRINCIPAL + GALERÍA ======
+  hero: "img/hero-producto.webp",
+  gallery: [
+    { src: "img/g-triangular.webp", cap: "Diseño triangular: bordes y esquinas sin suciedad" },
+    { src: "img/g-seco-humedo.webp", cap: "Limpia en seco y en húmedo" },
+    { src: "img/g-zocalos.webp", cap: "Gira 360° y llega debajo de los muebles" },
+    { src: "img/g-compartimento.webp", cap: "Compartimento para jabón líquido" },
+    { src: "img/sec1-esquinas.webp", cap: "Llega donde las mopas comunes no pueden" },
+    { src: "img/sec2-casa.webp", cap: "Una sola mopa para toda la casa" }
+  ],
+
+  // ====== PANEL DE FUNCIONES (editable en vivo con ?config=1 o Ctrl+Shift+C) ======
+  features: {
+    announcementBar: true,   // Barra superior con beneficios
+    stickyMobileBar: true,   // Barra fija de compra en mobile
+    stockUrgency: true,      // Contador de stock "Quedan XX unidades"
+    floatingWhats: true,     // Botón flotante de WhatsApp
+    backToTop: true          // Botón "volver arriba"
+  },
+
+  urgency: {
+    stockStart: 41,          // Unidades iniciales del contador (stock real, sin temporizadores falsos)
+    stockMin: 7              // No baja de este número
+  }
 };
+
+// Ciudades de Paraguay para autocompletar y prueba social
+const PY_CITIES = [
+  "Asunción", "Ciudad del Este", "San Lorenzo", "Luque", "Capiatá",
+  "Lambaré", "Fernando de la Mora", "Limpio", "Ñemby", "Encarnación",
+  "Mariano Roque Alonso", "Villa Elisa", "Itauguá", "Caaguazú",
+  "Coronel Oviedo", "Presidente Franco", "Villarrica", "Hernandarias",
+  "San Antonio", "Concepción", "Pilar", "Caacupé", "Areguá",
+  "Paraguarí", "Villa Hayes", "Itá", "Guarambaré", "Pedro Juan Caballero"
+];
+
+// Zonas con delivery a domicilio (el resto va por transportadora)
+const DELIVERY_CITIES = [
+  "Asunción", "San Lorenzo", "Luque", "Capiatá", "Lambaré",
+  "Fernando de la Mora", "Limpio", "Ñemby", "Mariano Roque Alonso",
+  "Villa Elisa", "Itauguá", "San Antonio", "Areguá", "Itá",
+  "Guarambaré", "Villa Hayes", "Ypané"
+];
+
+// Exponer en window
+window.PRODUCT_CONFIG = PRODUCT_CONFIG;
+window.PY_CITIES = PY_CITIES;
+window.DELIVERY_CITIES = DELIVERY_CITIES;
