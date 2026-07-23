@@ -10,8 +10,8 @@ const CONFIG = {
   supabaseAnonKey: 'sb_publishable_aRPb1yNunMEheat00BxwtQ_Uft732KJ',
   supabaseTable: 'pedidos_web',
   metaPixelId: '2412226475899711',
-  telegramBotToken: '8869299563:AAEWZXJbSv463j_3buKwo-vp0_7bCThs2_A',
-  telegramChatId: '1261379730',
+  // Telegram se envía server-side desde el trigger de Supabase (notify_telegram_new_order).
+  // NUNCA poner el bot token aquí: es código de cliente y quedaría público.
 };
 
 const trackingFired = new Set();
@@ -787,50 +787,6 @@ function setupInputAutoSave() {
   });
 }
 
-async function sendTelegramNotification(order) {
-  const token = CONFIG.telegramBotToken;
-  const chatId = CONFIG.telegramChatId;
-  if (!token || !chatId) {
-    console.log("Telegram notification skipped: Bot token or Chat ID not configured.");
-    return;
-  }
-  const dateStr = new Date(order.created_at).toLocaleString('es-PY', { timeZone: 'America/Asuncion' });
-  const message = [
-    "🛒 *NUEVO PEDIDO*",
-    `Pedido: ${order.id || order.numero_pedido}`,
-    `Producto: ${order.producto_nombre || order.producto}`,
-    `Cantidad: ${order.cantidad}`,
-    `Precio unitario: ${formatGuarani(order.precio_unitario || order.precio)}`,
-    `Envío: ${order.costo_envio === 0 ? 'Gratis' : formatGuarani(order.costo_envio)}`,
-    `Total: ${formatGuarani(order.total || order.subtotal)}`,
-    `Cliente: ${order.nombre_cliente || order.nombre}`,
-    `WhatsApp: ${order.telefono_whatsapp || order.telefono}`,
-    `Ciudad: ${order.ciudad}`,
-    `Barrio: ${order.barrio || '—'}`,
-    `Dirección: ${order.direccion}`,
-    `Referencia: ${order.referencia || '—'}`,
-    `Ubicación: ${order.ubicacion_maps || '—'}`,
-    `Observaciones: ${order.observaciones || '—'}`,
-    `Estado: Pendiente de confirmación`,
-    `Fecha: ${dateStr}`,
-    `Fuente: ${order.utm_source || 'Directo'}`
-  ].join('\n');
-
-  try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'Markdown'
-      })
-    });
-  } catch (err) {
-    console.error("Failed to send Telegram notification from client:", err);
-  }
-}
-
 function setupWhatsAppTracking() {
   document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
     link.addEventListener('click', () => {
@@ -943,7 +899,7 @@ orderForms.forEach((form) => form.addEventListener('submit', async (event) => {
     trackLandingEvent('lead', payload);
     trackLandingEvent('purchase', payload);
 
-    sendTelegramNotification(order).catch(err => console.error('Telegram notification failed:', err));
+    // La notificación a Telegram la dispara el trigger de Supabase al insertar el pedido.
 
     localStorage.removeItem('checkout_name');
     localStorage.removeItem('checkout_phone');
