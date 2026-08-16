@@ -23,6 +23,13 @@ const productImagesByColor = {
   Rosa: 'img/rosa.jpeg',
 };
 
+const ORDER_COLOR_OPTIONS = [
+  { name: 'Negro', swatch: '#15151b' },
+  { name: 'Gris', swatch: '#9aa0a6' },
+  { name: 'Lila', swatch: '#b79ce8' },
+  { name: 'Rosa', swatch: '#e86ea6' },
+];
+
 function selectProductColor(color, imagePath = productImagesByColor[color]) {
   if (!color) return;
 
@@ -39,6 +46,8 @@ function selectProductColor(color, imagePath = productImagesByColor[color]) {
   const checkoutImage = document.querySelector('#checkoutProductImage');
   if (label) label.textContent = color;
   if (checkoutColor) checkoutColor.value = color;
+  selectedOrderColors[0] = color;
+  renderOrderColorSelectors();
   if (mainImage && imagePath) mainImage.src = imagePath;
   if (checkoutImage && imagePath) {
     checkoutImage.src = imagePath;
@@ -126,6 +135,10 @@ const summaryEstimate = document.querySelector('#summaryEstimate');
 const summaryDeliveryCost = document.querySelector('#summaryDeliveryCost');
 const summaryColor = document.querySelector('#summaryColor');
 const colorSelect = document.querySelector('#colorSelect');
+const colorsInput = document.querySelector('#colorsInput');
+const orderColorUnits = document.querySelector('#orderColorUnits');
+const orderColorsCount = document.querySelector('#orderColorsCount');
+const orderColorsSummary = document.querySelector('#orderColorsSummary');
 const quantitySelect = document.querySelector('#quantitySelect');
 const cityInput = document.querySelector('#cityInput');
 const departmentSelect = document.querySelector('#departmentSelect');
@@ -145,12 +158,79 @@ const floatCta = document.querySelector('#floatCta');
 let map;
 let mapMarker;
 let currentQuantity = 1;
+let selectedOrderColors = ['Negro'];
 
 const pricesByQuantity = {
   1: 199000,
   2: 369000,
   3: 519000,
 };
+
+function getSelectedOrderColors(quantity = Number(quantitySelect?.value || 1)) {
+  const safeQuantity = Math.max(1, Math.min(3, Number(quantity) || 1));
+  const fallback = selectedOrderColors[0] || 'Negro';
+  while (selectedOrderColors.length < safeQuantity) selectedOrderColors.push(fallback);
+  selectedOrderColors = selectedOrderColors.slice(0, safeQuantity);
+  return [...selectedOrderColors];
+}
+
+function getOrderColorsLabel(colors = getSelectedOrderColors()) {
+  const counts = colors.reduce((result, color) => {
+    result[color] = (result[color] || 0) + 1;
+    return result;
+  }, {});
+  return ORDER_COLOR_OPTIONS
+    .filter(option => counts[option.name])
+    .map(option => `${counts[option.name]} ${option.name}`)
+    .join(' + ');
+}
+
+function getOrderColorsDetail(colors = getSelectedOrderColors()) {
+  return colors.map((color, index) => `Unidad ${index + 1}: ${color}`).join(' · ');
+}
+
+function renderOrderColorSelectors() {
+  if (!orderColorUnits) return;
+  const colors = getSelectedOrderColors();
+  orderColorUnits.innerHTML = colors.map((selectedColor, index) => `
+    <div class="order-color-unit">
+      <span class="order-color-unit-label">Unidad ${index + 1}</span>
+      <div class="order-color-options" role="group" aria-label="Color para la unidad ${index + 1}">
+        ${ORDER_COLOR_OPTIONS.map(option => `
+          <button class="order-color-choice${option.name === selectedColor ? ' active' : ''}" type="button"
+            data-unit-index="${index}" data-order-color="${option.name}"
+            aria-pressed="${option.name === selectedColor}" aria-label="Unidad ${index + 1}, color ${option.name}">
+            <span class="order-color-swatch" style="--choice-swatch:${option.swatch}"></span>
+            <span>${option.name}</span>
+          </button>`).join('')}
+      </div>
+    </div>`).join('');
+
+  const label = getOrderColorsLabel(colors);
+  if (colorSelect) colorSelect.value = colors[0];
+  if (colorsInput) colorsInput.value = colors.join(', ');
+  if (orderColorsSummary) orderColorsSummary.textContent = label;
+  if (orderColorsCount) orderColorsCount.textContent = `${colors.length} ${colors.length === 1 ? 'bolso' : 'bolsos'}`;
+  if (summaryColor) summaryColor.textContent = label;
+}
+
+orderColorUnits?.addEventListener('click', (event) => {
+  const choice = event.target.closest('[data-order-color]');
+  if (!choice) return;
+  const unitIndex = Number(choice.dataset.unitIndex);
+  const color = choice.dataset.orderColor;
+  if (!Number.isInteger(unitIndex) || !productImagesByColor[color]) return;
+  selectedOrderColors[unitIndex] = color;
+  renderOrderColorSelectors();
+  if (unitIndex === 0) {
+    const checkoutImage = document.querySelector('#checkoutProductImage');
+    if (checkoutImage) {
+      checkoutImage.src = productImagesByColor[color];
+      checkoutImage.alt = `Bolsón color ${color}`;
+    }
+  }
+  updateFinalSummary();
+});
 
 function trackingPayload(quantity = currentQuantity) {
   const subtotal = pricesByQuantity[quantity] || pricesByQuantity[1] || CONFIG.productPrice;
@@ -549,6 +629,9 @@ function buildSupabasePayload(order) {
   // Los datos extra (barrio, observaciones, envío, UTM, dispositivo) se guardan
   // dentro de `referencia` para no perder información ni romper el insert.
   const refParts = [];
+  if (order.detalle_colores || order.colores || order.color) {
+    refParts.push(`Colores: ${order.detalle_colores || order.colores || order.color}`);
+  }
   if (order.barrio) refParts.push(`Barrio: ${order.barrio}`);
   if (order.referencia) refParts.push(`Ref: ${order.referencia}`);
   if (order.observaciones) refParts.push(`Obs: ${order.observaciones}`);
@@ -675,8 +758,13 @@ function updateOrderSummary() {
   if (productPriceTop) productPriceTop.textContent = formatGuarani(price);
 }
 
-quantitySelect?.addEventListener('change', updateOrderSummary);
-colorSelect?.addEventListener('change', () => selectProductColor(colorSelect.value));
+quantitySelect?.addEventListener('change', () => {
+  currentQuantity = Number(quantitySelect.value || 1);
+  renderOrderColorSelectors();
+  updateOrderSummary();
+  updateFinalSummary();
+});
+renderOrderColorSelectors();
 updateOrderSummary();
 
 backLink?.addEventListener('click', (event) => {
@@ -734,7 +822,7 @@ cityInput?.addEventListener('input', () => setDeliveryNotice(cityInput.value));
 
 function updateFinalSummary() {
   const qty = Number(quantitySelect?.value || 1);
-  const color = colorSelect?.value || 'Negro';
+  const color = getOrderColorsLabel(getSelectedOrderColors(qty));
   const price = pricesByQuantity[qty] || pricesByQuantity[1];
   const city = cityInput?.value?.trim() || '';
   const address = addressInput?.value?.trim() || '';
@@ -872,6 +960,9 @@ orderForms.forEach((form) => form.addEventListener('submit', async (event) => {
     precio_unitario: CONFIG.productPrice,
     precio: CONFIG.productPrice,
     cantidad: quantity,
+    color: getSelectedOrderColors(quantity)[0],
+    colores: getOrderColorsLabel(getSelectedOrderColors(quantity)),
+    detalle_colores: getOrderColorsDetail(getSelectedOrderColors(quantity)),
     subtotal,
     costo_envio: shipping,
     total,
@@ -928,6 +1019,9 @@ orderForms.forEach((form) => form.addEventListener('submit', async (event) => {
     localStorage.removeItem('checkout_neighborhood');
 
     form.reset();
+    selectedOrderColors = ['Negro'];
+    currentQuantity = 1;
+    renderOrderColorSelectors();
     clearMapLocation();
     selectProductColor(colorSelect?.value || 'Negro');
     currentQuantity = 1;

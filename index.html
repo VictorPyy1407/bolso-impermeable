@@ -315,16 +315,6 @@
             </section>
 
             <label>
-              <span>Color del bolsón</span>
-              <select name="color" id="colorSelect">
-                <option value="Negro">Negro</option>
-                <option value="Gris">Gris</option>
-                <option value="Lila">Lila</option>
-                <option value="Rosa">Rosa</option>
-              </select>
-            </label>
-
-            <label>
               <span>Cantidad</span>
               <select name="quantity" id="quantitySelect">
                 <option value="1" data-price="199000">1 unidad - Gs. 199.000</option>
@@ -332,6 +322,21 @@
                 <option value="3" data-price="519000">3 unidades - Gs. 519.000</option>
               </select>
             </label>
+
+            <section class="order-colors" aria-labelledby="orderColorsTitle">
+              <div class="order-colors-heading">
+                <div>
+                  <span class="order-colors-kicker">Armá tu combinación</span>
+                  <h3 id="orderColorsTitle">Elegí un color por unidad</h3>
+                </div>
+                <span class="order-colors-count" id="orderColorsCount">1 bolso</span>
+              </div>
+              <p>Si llevás 2 o 3, podés elegir colores diferentes.</p>
+              <input type="hidden" name="color" id="colorSelect" value="Negro">
+              <input type="hidden" name="colors" id="colorsInput" value="Negro">
+              <div class="order-color-units" id="orderColorUnits"></div>
+              <p class="order-colors-summary"><span>Tu pedido:</span> <strong id="orderColorsSummary">1 Negro</strong></p>
+            </section>
 
             <div class="checkout-subheading">
               <span>Datos de entrega</span>
@@ -415,6 +420,18 @@
             <div class="step-actions">
               <button type="button" class="step-next" data-next="2">Revisar mi pedido →</button>
             </div>
+
+            <section class="checkout-reviews checkout-reviews-after-action" aria-labelledby="checkoutReviewsTitle">
+              <div class="checkout-reviews-heading">
+                <span class="verified-stack" aria-hidden="true">✓</span>
+                <div><strong id="checkoutReviewsTitle">Clientes que ya eligieron el suyo</strong><small>Compras verificadas</small></div>
+              </div>
+              <div class="checkout-review-list">
+                <article><div class="review-meta"><span>★★★★★</span><small>Carolina M. · Luque</small></div><p>“Pedí negro y gris. Llegaron tal cual elegí y tienen muchísimo espacio.”</p></article>
+                <article><div class="review-meta"><span>★★★★★</span><small>Fabiola R. · San Lorenzo</small></div><p>“Me confirmaron por WhatsApp y pagué recién cuando recibí. Todo súper claro.”</p></article>
+                <article><div class="review-meta"><span>★★★★★</span><small>Mónica A. · Asunción</small></div><p>“El color lila es precioso y la parte impermeable me salvó en un viaje.”</p></article>
+              </div>
+            </section>
           </div>
 
           <div class="step-panel" data-step-panel="2" hidden>
@@ -422,7 +439,7 @@
               <h3>Resumen del pedido</h3>
               <dl>
                 <div><dt>Producto</dt><dd>Bolsón de Viaje Impermeable</dd></div>
-                <div><dt>Color</dt><dd id="summaryColor">Negro</dd></div>
+                <div><dt>Colores</dt><dd id="summaryColor">1 Negro</dd></div>
                 <div><dt>Cantidad</dt><dd id="summaryQuantity">1 unidad</dd></div>
                 <div><dt>Precio</dt><dd id="summaryUnitPrice">Gs. 199.000</dd></div>
                 <div><dt>Costo de entrega</dt><dd id="summaryDeliveryCost">Gratis</dd></div>

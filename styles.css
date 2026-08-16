@@ -443,6 +443,45 @@ body.checkout-open .checkout-page{
 .checkout-product strong{display:block;font-size:1rem}
 .checkout-product span{display:block;font-family:'Sora';font-weight:800;color:var(--violet-deep);font-size:1.1rem;margin:2px 0}
 .checkout-product small{color:var(--muted);font-size:.8rem}
+
+.order-colors{
+  margin:2px 0 20px;padding:16px;border:1px solid var(--lilac-2);border-radius:18px;
+  background:linear-gradient(145deg,#fff 0%,#faf8ff 100%);box-shadow:0 8px 24px rgba(76,29,149,.06);
+}
+.order-colors-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.order-colors-kicker{display:block;color:var(--violet);font-size:.68rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;margin-bottom:3px}
+.order-colors h3{font-family:'Sora';font-size:1rem;font-weight:800}
+.order-colors>p{color:var(--muted);font-size:.8rem;line-height:1.45;margin:5px 0 13px}
+.order-colors-count{flex:0 0 auto;background:var(--violet-deep);color:#fff;border-radius:999px;padding:6px 10px;font-size:.72rem;font-weight:800}
+.order-color-units{display:grid;gap:10px}
+.order-color-unit{padding:11px;background:#fff;border:1px solid var(--line);border-radius:14px}
+.order-color-unit-label{display:block;font-size:.74rem;font-weight:800;color:var(--ink);margin-bottom:8px}
+.order-color-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.order-color-choice{
+  min-height:39px;display:flex;align-items:center;justify-content:flex-start;gap:7px;padding:7px 9px;
+  border:1.5px solid var(--line);border-radius:11px;background:#fff;color:var(--muted);font-size:.76rem;font-weight:700;
+  transition:border-color .18s,box-shadow .18s,transform .18s;
+}
+.order-color-choice:hover{transform:translateY(-1px);border-color:var(--violet)}
+.order-color-choice:focus-visible{outline:3px solid rgba(139,92,246,.22);outline-offset:2px}
+.order-color-choice.active{border-color:var(--violet);color:var(--violet-deep);box-shadow:0 0 0 2px rgba(139,92,246,.12)}
+.order-color-swatch{width:19px;height:19px;flex:0 0 auto;border-radius:50%;background:var(--choice-swatch);box-shadow:inset 0 0 0 1px rgba(0,0,0,.1),0 0 0 2px #fff,0 0 0 3px var(--line)}
+.order-colors .order-colors-summary{display:flex;justify-content:space-between;gap:12px;margin:11px 0 0;padding-top:10px;border-top:1px dashed var(--lilac-2);color:var(--muted)}
+.order-colors-summary strong{color:var(--violet-deep);text-align:right}
+
+.checkout-reviews{margin:0 0 22px;padding:15px;border-radius:18px;background:#15151b;color:#fff;box-shadow:0 12px 26px rgba(15,15,20,.14)}
+.checkout-reviews-after-action{margin:16px 0 0}
+.checkout-reviews-heading{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.verified-stack{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:var(--violet-bright);font-weight:900}
+.checkout-reviews-heading strong,.checkout-reviews-heading small{display:block}
+.checkout-reviews-heading strong{font-family:'Sora';font-size:.88rem}
+.checkout-reviews-heading small{color:#c8c3d3;font-size:.7rem;margin-top:2px}
+.checkout-review-list{display:grid;gap:8px}
+.checkout-review-list article{padding:11px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.06)}
+.review-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.review-meta span{color:#f6c453;font-size:.72rem;letter-spacing:.04em}
+.review-meta small{color:#c8c3d3;font-size:.66rem}
+.checkout-review-list p{font-size:.76rem;line-height:1.45;color:#f4f1f8}
 .checkout-subheading{border-top:1px solid var(--line);padding-top:20px;margin:22px 0 16px}
 .checkout-subheading span{display:block;font-family:'Sora';font-size:1.08rem;font-weight:800}
 .checkout-subheading small{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}
@@ -550,6 +589,8 @@ body.checkout-open .checkout-page{
    RESPONSIVE (desktop / tablet)
    ============================================================ */
 @media(min-width:760px){
+  .order-color-options{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .checkout-review-list{grid-template-columns:repeat(3,minmax(0,1fr))}
   .benefits-grid{grid-template-columns:repeat(2,1fr)}
   .color-cards,.usecases-grid{grid-template-columns:repeat(2,1fr)}
   .interior-stage{grid-template-columns:1.5fr 1fr;align-items:center}
