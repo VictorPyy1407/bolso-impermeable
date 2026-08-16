@@ -560,6 +560,16 @@ body.checkout-open .checkout-page{
   flex:1;text-align:center;background:var(--grad);color:#fff;font-family:'Sora';font-weight:800;
   padding:15px;border-radius:var(--r-pill);box-shadow:0 10px 24px rgba(124,58,237,.34);
 }
+.floating-whatsapp{
+  position:fixed;right:16px;bottom:88px;z-index:72;width:56px;height:56px;
+  display:flex;align-items:center;justify-content:center;border:3px solid #fff;border-radius:50%;background:#25D366;color:#fff;
+  box-shadow:0 12px 30px rgba(18,140,68,.4);transition:transform .2s var(--ease),background .2s,opacity .2s;
+}
+.floating-whatsapp:hover{transform:translateY(-3px) scale(1.04);background:#1FBE5B}
+.floating-whatsapp:focus-visible{outline:4px solid rgba(31,175,97,.25);outline-offset:3px}
+.floating-whatsapp svg{width:29px;height:33px;flex:0 0 auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.floating-whatsapp>span{display:none}
+body.checkout-open .floating-whatsapp{opacity:0;pointer-events:none;transform:translateY(12px)}
 
 /* ---------- Lightbox ---------- */
 .lightbox{position:fixed;inset:0;z-index:130;background:rgba(15,15,20,.92);display:flex;align-items:center;justify-content:center;padding:20px}
@@ -589,6 +599,12 @@ body.checkout-open .checkout-page{
    RESPONSIVE (desktop / tablet)
    ============================================================ */
 @media(min-width:760px){
+  .floating-whatsapp{right:24px;bottom:24px;width:auto;height:58px;padding:0 18px 0 13px;border-radius:18px;gap:10px}
+  .floating-whatsapp svg{width:31px;height:31px}
+  .floating-whatsapp>span,.floating-whatsapp strong,.floating-whatsapp small{display:block}
+  .floating-whatsapp>span{text-align:left;line-height:1.15}
+  .floating-whatsapp strong{font-family:'Sora';font-size:.82rem}
+  .floating-whatsapp small{margin-top:3px;color:rgba(255,255,255,.82);font-size:.68rem}
   .order-color-options{grid-template-columns:repeat(4,minmax(0,1fr))}
   .checkout-review-list{grid-template-columns:repeat(3,minmax(0,1fr))}
   .benefits-grid{grid-template-columns:repeat(2,1fr)}
