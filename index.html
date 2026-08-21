@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bolsón de Viaje Impermeable | Viajá más, organizá todo — VG Shop Py</title>
-  <meta name="description" content="Bolsón de viaje impermeable y expandible para viajes, gimnasio, trabajo y más. Oferta Gs. 199.000. Delivery gratis y pago contra entrega en todo Paraguay.">
+  <meta name="description" content="Bolsón de viaje impermeable y expandible para viajes, gimnasio, trabajo y más. Oferta Gs. 199.000. Delivery gratis y pago contra entrega en Asunción y Central; pago anticipado para envíos al interior.">
   <meta name="theme-color" content="#0F0F14">
   <link rel="icon" type="image/png" href="img/VGshop Logo.png">
   <link rel="apple-touch-icon" href="img/VGshop Logo.png">
@@ -12,14 +12,14 @@
   <!-- Open Graph -->
   <meta property="og:type" content="product">
   <meta property="og:title" content="Bolsón de Viaje Impermeable | Viajá más, organizá todo">
-  <meta property="og:description" content="Un solo bolsón para viajes, gimnasio, trabajo y mucho más. Oferta Gs. 199.000 con delivery gratis y pago contra entrega.">
+  <meta property="og:description" content="Un solo bolsón para viajes, gimnasio, trabajo y mucho más. Oferta Gs. 199.000 con delivery gratis en Asunción y Central.">
   <meta property="og:image" content="img/PROD20260423_69ea3f74e8023.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
-  <link rel="stylesheet" href="styles.css?v=20260808-inline-map-v9">
+  <link rel="stylesheet" href="styles.css?v=20260820-payment-check-v11">
 
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -63,10 +63,10 @@
   <div class="announce" role="region" aria-label="Beneficios de compra">
     <div class="announce-track">
       <span>🚚 Delivery GRATIS</span><i>•</i>
-      <span>💵 Pago contra entrega</span><i>•</i>
+      <span>💵 Pago al recibir en Asunción y Central</span><i>•</i>
       <span>⭐ Oferta limitada</span><i>•</i>
       <span>🚚 Delivery GRATIS</span><i>•</i>
-      <span>💵 Pago contra entrega</span><i>•</i>
+      <span>💵 Pago al recibir en Asunción y Central</span><i>•</i>
       <span>⭐ Oferta limitada</span><i>•</i>
     </div>
   </div>
@@ -292,7 +292,7 @@
         <button class="checkout-close" type="button" aria-label="Cerrar checkout">×</button>
 
         <div class="checkout-header">
-          <small>PAGO SEGURO CONTRA ENTREGA</small>
+          <small>COMPRA SEGURA · ENVÍOS A TODO PARAGUAY</small>
           <h2>Confirmá tu pedido</h2>
         </div>
 
@@ -310,7 +310,7 @@
               <div>
                 <strong>Bolsón de Viaje Impermeable</strong>
                 <span id="productPriceTop">Gs. 199.000</span>
-                <small>Envío gratis a Asunción y Central · Pagás al recibir</small>
+                <small>Asunción y Central: pagás al recibir · Interior: pago anticipado</small>
               </div>
             </section>
 
@@ -383,7 +383,7 @@
               <input type="text" name="city" id="cityInput" list="coverageCityList" autocomplete="address-level2" required placeholder="Ej: Asunción">
             </label>
 
-            <div class="delivery-notice" id="deliveryNotice">
+            <div class="delivery-notice" id="deliveryNotice" role="status" aria-live="polite">
               <strong>Formas de pago:</strong> Asunción y Central: envío gratis y pago contra entrega. Interior: te contactamos para coordinar el abono antes del despacho.
             </div>
 
@@ -452,7 +452,19 @@
               <p id="paymentNote">No pagás nada ahora. Registrás el pedido y te contactamos para confirmar antes del envío.</p>
             </section>
 
-            <button class="order-button pulse-buy" type="submit">
+            <div class="interior-payment-confirmation" id="interiorPaymentConfirmation" role="alert" hidden>
+              <span class="interior-payment-icon" aria-hidden="true">!</span>
+              <div>
+                <strong>Este pedido requiere pago anticipado</strong>
+                <p>Como la entrega es al interior, te contactaremos por WhatsApp con los datos de pago. El pedido se despacha después de confirmar el abono.</p>
+                <label class="interior-payment-check" for="interiorPaymentCheck">
+                  <input type="checkbox" name="advance_payment_acknowledged" id="interiorPaymentCheck" value="yes">
+                  <span>Entiendo y acepto realizar el pago anticipado antes del despacho.</span>
+                </label>
+              </div>
+            </div>
+
+            <button class="order-button pulse-buy" id="orderSubmitButton" type="submit">
               <span class="btn-text">✅ CONFIRMAR MI PEDIDO</span>
               <span class="btn-loader hidden"><span class="spinner"></span> Procesando...</span>
             </button>
@@ -460,7 +472,7 @@
             <div class="trust-badges" aria-label="Elementos de confianza">
               <span>🔒 Compra 100% segura</span>
               <span>🚚 Delivery GRATIS</span>
-              <span>💵 Pago contra entrega</span>
+              <span id="paymentTrustBadge">💵 Pago contra entrega</span>
               <span>📦 Envíos a todo Paraguay</span>
             </div>
 
@@ -528,6 +540,6 @@
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
-  <script src="script.js?v=20260808-color-image-v10"></script>
+  <script src="script.js?v=20260820-payment-check-v12"></script>
 </body>
 </html>

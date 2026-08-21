@@ -153,6 +153,11 @@ const formError = document.querySelector('#formError');
 const step1FormError = document.querySelector('#step1FormError');
 const deliveryNotice = document.querySelector('#deliveryNotice');
 const paymentNote = document.querySelector('#paymentNote');
+const interiorPaymentConfirmation = document.querySelector('#interiorPaymentConfirmation');
+const interiorPaymentCheck = document.querySelector('#interiorPaymentCheck');
+const orderSubmitButton = document.querySelector('#orderSubmitButton');
+const orderSubmitText = orderSubmitButton?.querySelector('.btn-text');
+const paymentTrustBadge = document.querySelector('#paymentTrustBadge');
 const checkoutLoader = document.querySelector('#checkoutLoader');
 const floatCta = document.querySelector('#floatCta');
 let map;
@@ -637,7 +642,9 @@ function buildSupabasePayload(order) {
   if (order.observaciones) refParts.push(`Obs: ${order.observaciones}`);
   refParts.push(order.costo_envio === 0
     ? 'Envío gratis · Pago contra entrega'
-    : 'Interior · Coordinar envío y pago por WhatsApp');
+    : order.pago_anticipado_aceptado
+      ? 'Interior · Cliente aceptó pago anticipado · Coordinar por WhatsApp'
+      : 'Interior · Coordinar envío y pago por WhatsApp');
   const utm = [order.utm_source, order.utm_medium, order.utm_campaign].filter(Boolean).join('/');
   if (utm) refParts.push(`UTM: ${utm}`);
   if (order.dispositivo || order.device_type) refParts.push(`Disp: ${order.dispositivo || order.device_type}`);
@@ -804,21 +811,73 @@ function isCashOnDeliveryArea(city) {
   return COVERAGE_CITIES.some(ci => ci.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') === c);
 }
 
-function setDeliveryNotice(value) {
+function isCashOnDeliveryDepartment(department) {
+  return department === 'Capital' || department === 'Central';
+}
+
+function isInteriorOrder() {
+  return Boolean(departmentSelect?.value) && !isCashOnDeliveryDepartment(departmentSelect.value);
+}
+
+function updatePaymentConfirmation() {
+  const hasDepartment = Boolean(departmentSelect?.value);
+  const interior = isInteriorOrder();
+
+  if (interiorPaymentConfirmation) interiorPaymentConfirmation.hidden = !interior;
+  if (interiorPaymentCheck) interiorPaymentCheck.required = interior;
+  orderSubmitButton?.classList.toggle('payment-advance', interior);
+  if (orderSubmitButton && !window._submitting) {
+    orderSubmitButton.disabled = interior && !interiorPaymentCheck?.checked;
+  }
+
+  if (orderSubmitText) {
+    orderSubmitText.textContent = interior
+      ? '✅ CONFIRMAR PEDIDO CON PAGO ANTICIPADO'
+      : '✅ CONFIRMAR MI PEDIDO';
+  }
+
+  if (paymentTrustBadge) {
+    paymentTrustBadge.textContent = interior
+      ? '💳 Pago anticipado para el interior'
+      : '💵 Pago contra entrega';
+  }
+
   if (!deliveryNotice) return;
-  const available = isCashOnDeliveryArea(value);
   const estimatedDate = getEstimatedDeliveryLabel();
-  deliveryNotice.classList.toggle('delivery-ok', Boolean(value && available));
-  deliveryNotice.classList.toggle('delivery-interior', Boolean(value && !available));
-  const zoneMessage = value
-    ? (available
-      ? '<strong>✅ Zona habilitada:</strong> envío gratis y pago contra entrega.'
-      : '<strong>📦 Envío por transportadora:</strong> coordinamos el pago previo y el despacho.')
-    : '<strong>Formas de pago:</strong> Asunción y Central: envío gratis y pago contra entrega. Interior: te contactamos para coordinar.';
+  deliveryNotice.classList.toggle('delivery-ok', hasDepartment && !interior);
+  deliveryNotice.classList.toggle('delivery-interior', interior);
+
+  const zoneMessage = !hasDepartment
+    ? '<strong>Formas de pago:</strong> Asunción y Central: pago contra entrega. Interior: pago anticipado antes del despacho.'
+    : interior
+      ? '<strong>⚠️ Pago anticipado requerido:</strong> te contactaremos por WhatsApp para coordinar el abono antes de despachar por transportadora.'
+      : '<strong>✅ Pago contra entrega:</strong> no abonás nada ahora; pagás cuando recibís tu pedido.';
+
   deliveryNotice.innerHTML = `${zoneMessage}<span class="delivery-date">📅 Entrega estimada: <strong>${estimatedDate}</strong></span>`;
 }
 
-cityInput?.addEventListener('input', () => setDeliveryNotice(cityInput.value));
+function setSubmitLoading(button, loading) {
+  if (!button) return;
+  const buttonText = button.querySelector('.btn-text');
+  const buttonLoader = button.querySelector('.btn-loader');
+  button.disabled = loading;
+  buttonText?.classList.toggle('hidden', loading);
+  buttonLoader?.classList.toggle('hidden', !loading);
+}
+
+function setDeliveryNotice(value) {
+  updatePaymentConfirmation();
+}
+
+cityInput?.addEventListener('input', updatePaymentConfirmation);
+departmentSelect?.addEventListener('change', () => {
+  if (interiorPaymentCheck) interiorPaymentCheck.checked = false;
+  updatePaymentConfirmation();
+});
+interiorPaymentCheck?.addEventListener('change', () => {
+  if (formError) formError.textContent = '';
+  updatePaymentConfirmation();
+});
 
 function updateFinalSummary() {
   const qty = Number(quantitySelect?.value || 1);
@@ -827,7 +886,7 @@ function updateFinalSummary() {
   const city = cityInput?.value?.trim() || '';
   const address = addressInput?.value?.trim() || '';
   const neighborhood = neighborhoodInput?.value?.trim() || '';
-  const available = isCashOnDeliveryArea(city);
+  const available = isCashOnDeliveryDepartment(departmentSelect?.value);
 
   if (summaryColor) summaryColor.textContent = color;
   if (summaryQuantity) summaryQuantity.textContent = getQuantityText(qty);
@@ -840,7 +899,8 @@ function updateFinalSummary() {
   if (summaryEstimate) summaryEstimate.textContent = getEstimatedDeliveryLabel();
   if (paymentNote) paymentNote.textContent = available
     ? 'No pagás nada ahora. Pagás en efectivo cuando recibís tu pedido.'
-    : 'Coordinaremos el pago previo y el envío por transportadora antes del despacho.';
+    : 'Pago anticipado requerido: te enviaremos los datos por WhatsApp y despacharemos después de confirmar el abono.';
+  updatePaymentConfirmation();
 }
 
 // Visitor tracking
@@ -912,6 +972,14 @@ orderForms.forEach((form) => form.addEventListener('submit', async (event) => {
   const submitButton = form.querySelector('button[type="submit"]');
   const currentFormError = form.querySelector('.form-error') || formError;
 
+  const selectedDepartment = cleanText(formData.get('department'));
+  const requiresAdvancePayment = Boolean(selectedDepartment) && !isCashOnDeliveryDepartment(selectedDepartment);
+  if (requiresAdvancePayment && formData.get('advance_payment_acknowledged') !== 'yes') {
+    if (currentFormError) currentFormError.textContent = 'Marcá el check para confirmar que entendés el pago anticipado.';
+    interiorPaymentCheck?.focus();
+    return;
+  }
+
   // Prevent double click
   if (window._submitting) return;
   window._submitting = true;
@@ -924,9 +992,10 @@ orderForms.forEach((form) => form.addEventListener('submit', async (event) => {
   const observations = cleanText(formData.get('observations'));
   const mapUrl = cleanText(formData.get('map'), 'No informado');
   const subtotal = pricesByQuantity[quantity] || pricesByQuantity[1];
-  const paymentMode = isCashOnDeliveryArea(city) ? 'cash_on_delivery' : 'deposit_required_for_interior';
+  const cashOnDelivery = isCashOnDeliveryDepartment(department);
+  const paymentMode = cashOnDelivery ? 'cash_on_delivery' : 'deposit_required_for_interior';
   const orderId = generateOrderNumber();
-  const shipping = isCashOnDeliveryArea(city) ? 0 : null;
+  const shipping = cashOnDelivery ? 0 : null;
   const total = shipping === 0 ? subtotal : subtotal;
 
   // Get UTM params
@@ -992,14 +1061,13 @@ orderForms.forEach((form) => form.addEventListener('submit', async (event) => {
     utm_term: utmTerm,
     meta_fbp: fbp,
     meta_fbc: fbc,
+    forma_pago: paymentMode,
+    pago_anticipado_aceptado: !cashOnDelivery,
     created_at: new Date().toISOString(),
   };
 
   if (currentFormError) currentFormError.textContent = '';
-  if (submitButton) {
-    submitButton.disabled = true;
-    submitButton.textContent = 'Registrando pedido…';
-  }
+  setSubmitLoading(submitButton, true);
   if (checkoutLoader) checkoutLoader.classList.remove('hidden');
 
   try {
@@ -1025,7 +1093,7 @@ orderForms.forEach((form) => form.addEventListener('submit', async (event) => {
     clearMapLocation();
     selectProductColor(colorSelect?.value || 'Negro');
     currentQuantity = 1;
-    if (submitButton) { submitButton.disabled = false; submitButton.textContent = 'Realizar pedido'; }
+    setSubmitLoading(submitButton, false);
     if (checkoutLoader) checkoutLoader.classList.add('hidden');
 
     updateOrderSummary();
@@ -1043,7 +1111,8 @@ orderForms.forEach((form) => form.addEventListener('submit', async (event) => {
   } catch (error) {
     console.error(error);
     if (currentFormError) currentFormError.textContent = 'Ocurrió un error al procesar tu pedido. Por favor, intentá nuevamente.';
-    if (submitButton) { submitButton.disabled = false; submitButton.textContent = 'Realizar pedido'; }
+    setSubmitLoading(submitButton, false);
+    updatePaymentConfirmation();
     if (checkoutLoader) checkoutLoader.classList.add('hidden');
   } finally {
     window._submitting = false;

@@ -523,13 +523,43 @@ body.checkout-open .checkout-page{
 .order-summary dd.total{font-family:'Sora';font-weight:800;color:var(--violet-deep);font-size:1.2rem}
 #paymentNote{margin-top:12px;font-size:.84rem;color:var(--muted)}
 
+.interior-payment-confirmation{
+  display:flex;align-items:flex-start;gap:12px;margin:0 0 14px;padding:15px;
+  border:1.5px solid #fb923c;border-radius:15px;background:#fff7ed;color:#7c2d12;
+  box-shadow:0 8px 22px rgba(194,65,12,.09)
+}
+.interior-payment-confirmation[hidden]{display:none}
+.interior-payment-icon{
+  width:28px;height:28px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;
+  background:#f97316;color:#fff;font-family:'Sora';font-weight:900
+}
+.interior-payment-confirmation strong{display:block;font-family:'Sora';font-size:.92rem;margin-bottom:4px}
+.interior-payment-confirmation p{font-size:.8rem;line-height:1.48;color:#9a3412}
+.checkout-form .interior-payment-check{
+  display:flex;align-items:flex-start;gap:10px;margin:12px 0 0;padding:11px 12px;
+  border:1px solid #fdba74;border-radius:11px;background:#fff;cursor:pointer
+}
+.checkout-form .interior-payment-check input{
+  appearance:none;width:22px;height:22px;min-width:22px;margin:0;padding:0;border:2px solid #f97316;
+  border-radius:6px;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:none
+}
+.checkout-form .interior-payment-check input::before{
+  content:'✓';color:#fff;font-size:.9rem;font-weight:900;line-height:1;transform:scale(0);transition:transform .15s ease
+}
+.checkout-form .interior-payment-check input:checked{background:#f97316}
+.checkout-form .interior-payment-check input:checked::before{transform:scale(1)}
+.checkout-form .interior-payment-check input:focus-visible{outline:3px solid rgba(249,115,22,.25);outline-offset:2px}
+.checkout-form .interior-payment-check>span{display:block;margin:0;color:#7c2d12;font-size:.8rem;font-weight:700;line-height:1.4}
+
 .order-button{
   width:100%;background:var(--grad);color:#fff;font-family:'Sora';font-weight:800;font-size:1.1rem;
   padding:18px;border-radius:var(--r-pill);box-shadow:0 14px 34px rgba(124,58,237,.36);
   display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .18s;
 }
 .order-button:hover{transform:translateY(-2px)}
-.order-button:disabled{opacity:.7}
+.order-button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.order-button.payment-advance{background:linear-gradient(135deg,#ea580c,#f97316);box-shadow:0 14px 34px rgba(234,88,12,.3)}
+.order-button.payment-advance:hover{box-shadow:0 16px 38px rgba(234,88,12,.4)}
 .btn-loader{display:flex;align-items:center;gap:8px}
 .spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
